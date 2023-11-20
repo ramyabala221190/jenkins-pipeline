@@ -1,6 +1,7 @@
 pipeline {
     agent any
     //always use double quotes for echo so that it works with accessing environmental variables
+    //dont use variables in stage names. error will be thrown
 
       tools {nodejs "Node"}
 
@@ -36,7 +37,7 @@ pipeline {
            }
         
         }
-        stage("Build step") {
+        stage("Build step")  { 
             // when{
             //     //execute the stage only when the env variable with key environment has value prod
             //     //we are providing value for this key when running the pipeline
@@ -54,23 +55,6 @@ pipeline {
             }
         }
          
-        // stage('Build using dev configuration'){
-        //       when{
-        //         //execute the stage only when the env variable with key environment has value dev
-        //         //we are providing value for this key when running the pipeline
-        //         environment name: 'environment', value: 'dev'
-        //     }
-        //     steps{
-        //         echo "Building using ${environment} configuration"
-        //         bat  'npm run build:dev'
-
-        //     }
-        //     post{
-        //   success{
-        //     echo 'Build(dev) step completed'
-        //      }
-        //      }
-        // }
          
         stage('Test') {
             steps {

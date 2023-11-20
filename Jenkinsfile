@@ -70,10 +70,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                fileOperations([fileCopyOperation(
-                                  flattenFiles: true, //includes only files 
-                                  includes: 'dist/*/**',
-                                  targetLocation: "C:/Users/User/node/web/${environment}")]
+                // fileOperations([fileCopyOperation(
+                //                   flattenFiles: true, //includes only files 
+                //                   includes: 'dist/*/**',
+                //                   targetLocation: "C:/Users/User/node/web/${environment}")]
+                //                   )
+                 fileOperations([folderCopyOperation(
+                                 sourceFolderPath:'./dist/jenkins-test/',
+                                 destinationFolderPath:"C:/Users/User/node/web/${environment}"
+                                 )]
                                   )
 
             }

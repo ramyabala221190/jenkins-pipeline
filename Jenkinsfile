@@ -73,6 +73,7 @@ pipeline {
                 fileOperations([fileCopyOperation(
                                   flattenFiles: true, //includes only files 
                                   includes: 'dist/*/**',
+                                  renameFiles:true,
                                   targetLocation: "C:/Users/User/node/web/${environment}")]
                                   )
 

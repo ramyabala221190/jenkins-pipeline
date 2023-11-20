@@ -16,6 +16,7 @@ pipeline {
         stage('Clone'){
             steps{
                 echo "Cloning..."
+                cleanWs()
                 git 'https://github.com/ramyabala221190/jenkinsTest.git'
             }
             post{

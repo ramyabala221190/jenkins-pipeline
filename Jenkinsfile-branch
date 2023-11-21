@@ -61,10 +61,12 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing..'
+                bat "npm run test"
             }
             post{
           success{
             echo 'Test step completed'
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'dist/jenkins-test/reports', reportFiles: 'index.html', reportName: 'Test Reports', reportTitles: '', useWrapperFileDirectly: true])
               }
              }
         }

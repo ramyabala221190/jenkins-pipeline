@@ -16,7 +16,7 @@ pipeline {
         stage('Clone'){
             steps{
                 echo "Cloning..."
-                cleanWs()
+                cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                 git 'https://github.com/ramyabala221190/jenkinsTest.git'
             }
             post{
@@ -74,8 +74,10 @@ pipeline {
                 fileOperations([fileCopyOperation(
                                   flattenFiles: true, //includes only files 
                                   includes: 'dist/*/**',
-                                  targetLocation: "C:/Users/User/node/web/${environment}")]
-                                  )               
+                                  targetLocation: "C:/Users/User/nginx/nginx-1.25.3/html/${environment}")]
+                                  )     
+
+                                        
             }
              post{
           success{

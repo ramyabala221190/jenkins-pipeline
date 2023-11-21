@@ -3,7 +3,7 @@ pipeline {
     //always use double quotes for echo so that it works with accessing environmental variables
     //dont use variables in stage names. error will be thrown
 
-      tools {nodejs "Node"}
+      tools {nodejs "Node"} //Nodejs plugin installed
 
       options{
         timestamps() //Add timestamps to the Console Output
@@ -16,7 +16,8 @@ pipeline {
         stage('Clone'){
             steps{
                 echo "Cloning..."
-                cleanWs()
+                cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
+                //we are using the installed Git plugin to clone the branch from the repo
                 git branch: "${env.Branch}", changelog: false, credentialsId: 'b2b655c9-f74f-4813-8dfd-f2a565931b80', poll: false, url: 'https://github.com/ramyabala221190/jenkinsTest.git'
             }
             post{
@@ -71,10 +72,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
+                //fileOperations plugin
                 fileOperations([fileCopyOperation(
                                   flattenFiles: true, //includes only files 
                                   includes: 'dist/*/**',
-                                  targetLocation: "C:/Users/User/node/web/${environment}")]
+                                  targetLocation: "C:/Users/User/nginx/nginx-1.25.3/html/${environment}")]
                                   )
 
             }

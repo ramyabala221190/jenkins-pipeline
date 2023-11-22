@@ -1,0 +1,40 @@
+/* groovylint-disable NestedBlockDepth */
+pipeline{
+
+    agent any
+
+    stages{
+        stage('Docker Workflow'){
+            stages{
+                stage('Docker Build') {
+                    steps {
+                        echo 'Building'
+                        bat "docker build . -t jenkins-test-${environment} --build-arg env=${environment}"
+                    }
+                
+                }
+                stage('Docker Run in Prod') {
+                    when {
+                        
+                        environment name: 'environment', value: 'prod'
+                    }
+                    steps {
+                        echo 'Running'
+                        bat "docker run -dp 8800:8083 -it angular-image-${environment}"
+                    }
+                
+                }
+                stage('Docker Run in Dev') {
+                    when {
+                        environment name: 'environment', value: 'dev'
+                    }
+                    steps {
+                        echo 'Running'
+                        bat "docker run -dp 8800:8082 -it angular-image-${environment}"
+                    }
+                
+                }
+            }
+        }
+    }
+}

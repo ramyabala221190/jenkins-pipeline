@@ -1,8 +1,8 @@
 /* groovylint-disable NestedBlockDepth */
 pipeline{
 
-    agent any
-
+   agent { dockerfile true }
+   
     stages{
         stage('Docker Workflow'){
             stages{

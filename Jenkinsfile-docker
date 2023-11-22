@@ -1,8 +1,11 @@
 /* groovylint-disable NestedBlockDepth */
 pipeline{
 
-   agent { dockerfile true }
-   
+    agent { 
+        dockerfile {
+     
+   } }
+
     stages{
         stage('Docker Workflow'){
             stages{
@@ -37,4 +40,4 @@ pipeline{
             }
         }
     }
-}
+    }

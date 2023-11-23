@@ -31,7 +31,7 @@ pipeline {
                             //     bat 'docker stop jenkins-prod-container'
                             //     bat 'docker remove jenkins-prod-container'
                             // }
-                            bat "docker run --name jenkins-prod-container -dp 8083:80 -it jenkins-test-${environment}"
+                            bat "docker run --name jenkins-prod-container -dp 8083:80 -it jenkins-test-${environment} ls/"
                         }
                     }
                 }
@@ -48,7 +48,7 @@ pipeline {
                             //     bat 'docker stop jenkins-test-container'
                             //     bat 'docker remove jenkins-test-container'
                             // }
-                            bat "docker run --name jenkins-test-container -dp 8082:80 -it jenkins-test-${environment}"
+                            bat "docker run --name jenkins-test-container -dp 8082:80 -it jenkins-test-${environment} ls/"
                         }
                     }
                 }

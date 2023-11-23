@@ -24,9 +24,9 @@ pipeline{
 
                 stage('Docker Build') {
                     steps {
-                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
+                        //cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                         echo 'Building'
-                        bat "docker build github.com/ramyabala221190/jenkinsTest.git#${env.Branch} -t jenkins-test-${environment} --build-arg env=${environment}"
+                        bat "docker build -t jenkins-test-${environment} --build-arg env=${environment}"
                     }
                 
                 }

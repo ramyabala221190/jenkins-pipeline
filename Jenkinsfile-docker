@@ -25,7 +25,9 @@ pipeline {
                     steps {
                         echo 'Running Docker run in Prod'
                         script{
-                            if(bat 'docker ps --filter "name=jenkins-prod-container"'){
+                            def containerExists=bat 'docker ps --filter "name=jenkins-prod-container"'
+                            echo ${containerExists}
+                            if(containerExists){
                                 bat 'docker stop jenkins-prod-container'
                                 bat 'docker remove jenkins-prod-container'
                             }
@@ -40,7 +42,9 @@ pipeline {
                     steps {
                         echo 'Running Docker run in Dev'
                         script{
-                            if(bat 'docker ps --filter "name=jenkins-test-container"'){
+                            def containerExists=bat 'docker ps --filter "name=jenkins-test-container"'
+                            echo ${containerExists}
+                            if(containerExists){
                                 bat 'docker stop jenkins-test-container'
                                 bat 'docker remove jenkins-test-container'
                             }

@@ -26,7 +26,7 @@ pipeline {
                         echo 'Running'
                         // bat 'docker ps -q --filter "name=jenkins-test-container" | xargs -r docker stop'                       
                         // bat 'docker ps -aq --filter "name=jenkins-test-container" | xargs -r docker rm'
-                        bat "docker run --name jenkins-test-container -dp 8083:80 -it jenkins-test-${environment}"
+                        bat "docker run --name jenkins-prod-container -dp 8083:80 -it jenkins-test-${environment}"
                     }
                 }
                 stage('Docker Run in Dev') {
@@ -37,7 +37,7 @@ pipeline {
                         echo 'Running'
                         // bat 'docker ps -q --filter "name=jenkins-test-container" | xargs -r docker stop'                       
                         // bat 'docker ps -aq --filter "name=jenkins-test-container" | xargs -r docker rm'
-                        bat "docker run --name jenkins-prod-container -dp 8082:80 -it jenkins-test-${environment}"
+                        bat "docker run --name jenkins-test-container -dp 8082:80 -it jenkins-test-${environment}"
                     }
                 }
             }

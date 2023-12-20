@@ -1,0 +1,96 @@
+/* groovylint-disable NestedBlockDepth */
+/* groovylint-disable-next-line CompileStatic */
+
+
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true) //prevent default checkout of git branch
+        timestamps() //Add timestamps to the Console Output
+    }
+
+    environment{
+          /*
+readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
+        */
+        def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
+        DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
+        environ="${env.environment}" //environment info from pipeline input
+        tag="${env.tag}"
+        appPort="${envConfig.port}" //decide the application port based on the environment
+        containerPort=80 //fix the container port
+        fromRepositoryName=envRepoMapping(env.environment) //decide the repository from which the image needs to be pulled
+        toRepositoryName="angular-nginx-${env.environment}" //the repository to which the image needs to be pushed
+        containerName="angular-nginx-${env.environment}-container" //container name
+    }
+
+    stages{
+        stage('Docker Workflow') {
+            stages{
+                 stage('Clone') {
+                    steps {
+                        echo 'Cloning...'
+                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
+                        //we are using the installed Git plugin to clone the branch from the repo
+                        git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/jenkinsTest.git'
+                    }
+                }
+
+                stage('Docker Pull and Tag Image') {
+
+                    steps{
+                        echo 'Pulling latest image from low enviornment repository in DockerHub'
+                        bat "docker image pull ${DOCKER_HUB_CRED_USR}/${fromRepositoryName}:${tag}"
+                        bat "docker image tag ${DOCKER_HUB_CRED_USR}/${fromRepositoryName}:${tag} ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${tag}"
+                    }  
+                }
+
+                stage('Docker login'){
+                    steps {
+                   echo 'Logging in to DockerHub'
+                       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
+                       bat  "docker image prune --force"
+                    }
+                }
+                stage('Docker Push') {
+                    
+                    steps{
+                        echo 'Pushing image to DockerHub'
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${tag}"
+                    }
+                    post {
+                        success {
+                            bat "docker logout" //logout from docker
+                        }
+                    }
+                }
+                stage('Docker Deploy and Compose Up') {
+                    
+                    steps {
+                        echo 'Running Docker Compose Up'
+                        script{
+                            /*
+connect to a remote server, pull the docker image and run docker compose up
+                        */
+                            bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build nginx-${environ}" //- d ensures it runs in deatched mode
+                            //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+
+def envRepoMapping(envName){
+
+    if(envName.equals("prod")) {
+        return "angular-nginx-uat";
+    }
+    else if (envName.equals("uat")){
+        return "angular-nginx-dev";
+    } 
+}

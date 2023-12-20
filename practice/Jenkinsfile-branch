@@ -19,9 +19,8 @@ pipeline {
                         echo 'Cloning...'
                         cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                         //we are using the installed Git plugin to clone the branch from the repo
-                        git branch: "${env.Branch}", changelog: false,
-                        credentialsId: 'b2b655c9-f74f-4813-8dfd-f2a565931b80',
-                        poll: false, url: 'https://github.com/ramyabala221190/jenkinsTest.git'
+                        git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/jenkinsTest.git'
+
                     }
                     post {
                         success {

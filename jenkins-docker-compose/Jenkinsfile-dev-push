@@ -18,10 +18,12 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
         environ="${env.environment}" //environment info from pipeline input
         buildNumber="${env.BUILD_NUMBER}"
+        branchName="${env.Branch}"
         appPort="${envConfig.port}" //fix the application port
         containerPort=80 //fix the container port
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
         containerName="angular-nginx-${env.environment}-container"
+        serviceName="nginx-${env.environment}"
     }
 
     stages{
@@ -32,14 +34,14 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                         echo 'Cloning...'
                         cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                         //we are using the installed Git plugin to clone the branch from the repo
-                        git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/jenkinsTest.git'
+                        git branch: "${branchName}", url: 'https://github.com/ramyabala221190/jenkinsTest.git'
                     }
                 }
               
                 stage('Docker Build') {
                     steps {
                         echo 'Running Docker Compose build'
-                        bat  "docker compose -f docker/docker-compose.yml build nginx-${env.environment}"
+                        bat  "docker compose -f docker/docker-compose.yml build ${serviceName}"
                     }
                 }
 
@@ -70,7 +72,7 @@ connect to a remote server, pull the docker image and run docker compose up
                         */
                         echo 'Running Docker Compose Up'
                         script{
-                            bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build nginx-${environ}" //- d ensures it runs in deatched mode
+    bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName}" //- d ensures it runs in deatched mode
                             //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
                         }
                     }

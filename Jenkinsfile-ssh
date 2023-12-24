@@ -35,9 +35,7 @@ withCredentials([sshUserPrivateKey(
     usernameVariable: 'username', 
     passphraseVariable: 'passphrase')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
-  bat "ssh -tt -i ${keyfile} ${username}@192.168.29.185"
-  echo 'They are executed by: $( whoami )'
-
+  bat "ssh -tt -i ${keyfile} ${username}@192.168.29.185 echo pwd"
 }
                        
                     }

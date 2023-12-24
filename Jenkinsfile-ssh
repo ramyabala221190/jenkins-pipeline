@@ -34,7 +34,7 @@ pipeline {
 //     credentialsId: 'sshConnectionToMyWindows',usernameVariable: 'username')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
-    bat "ssh -l DESKTOP-R3L1N8A\Ramya 192.168.29.185 uname -a"
+    bat "ssh 192.168.29.185 uname -a"
 }
 //}
                        

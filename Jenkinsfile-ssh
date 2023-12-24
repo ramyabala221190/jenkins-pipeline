@@ -30,13 +30,13 @@ pipeline {
                     steps {
                         echo 'Execute SSH..'
 
-// withCredentials([sshUserPrivateKey(
-//     credentialsId: 'sshConnectionToMyWindows',usernameVariable: 'username')]) {
+withCredentials([sshUserPrivateKey(
+    credentialsId: 'sshConnectionToMyWindows',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
-    bat "ssh -l DESKTOP-R3L1N8A/Ramya 192.168.29.185 uname -a"
+    bat "ssh -i ${keyfile} -l ${username} 192.168.29.185 uname -a"
 }
-//}
+}
                        
                     }
                     post {

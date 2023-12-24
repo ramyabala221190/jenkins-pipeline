@@ -29,13 +29,19 @@ pipeline {
                 stage('Connect using SSH') {
                     steps {
                         echo 'Execute SSH..'
+
+sshagent(['sshConnectionToMyWindows']) {
+    bat "ssh -o StrictHostChecking=no -l "
+}
 withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnectionToMyWindows',
     keyFileVariable:'keyfile', 
     usernameVariable: 'username', 
     passphraseVariable: 'passphrase')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
-  bat "ssh -tt -i ${keyfile} ${username}@192.168.29.185 echo pwd"
+        sshagent(['sshConnectionToMyWindows']) {
+    bat "ssh -o StrictHostChecking=no -l ${username} 192.168.29.185 uname -a"
+}
 }
                        
                     }

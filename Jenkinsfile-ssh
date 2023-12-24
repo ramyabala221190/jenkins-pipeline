@@ -1,0 +1,62 @@
+/* groovylint-disable NestedBlockDepth */
+/* groovylint-disable-next-line CompileStatic */
+pipeline {
+    agent any
+    //always use double quotes for echo so that it works with accessing environmental variables
+    //dont use variables in stage names. error will be thrown
+
+    options {
+        timestamps() //Add timestamps to the Console Output
+    }
+
+
+    stages {
+        stage('Workflow') {
+            stages {
+                stage('Clone') {
+                    steps {
+                        echo 'Cloning...'
+                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
+                        git 'https://github.com/ramyabala221190/jenkinsTest.git'
+                    }
+                    post {
+                        success {
+                            echo 'Clone step completed'
+                        }
+                    }
+                }
+
+                stage('Connect using SSH') {
+                    steps {
+                        echo 'Execute SSH..'
+        withCredentials([sshUserPrivateKey(credentialsId: 'sshConnectionToMyWindows',keyFileVariable:'keyfile', usernameVariable: 'username', passphraseVariable: 'passphrase')]) {
+  // available as an env variable, but will be masked if you try to print it out any which way
+  // note: single quotes prevent Groovy interpolation; expansion is by Bourne Shell, which is what you want
+  echo "${passphrase}"
+  // also available as a Groovy variable
+  // or inside double quotes for string interpolation
+  echo "username is ${username}"
+
+  bat "ssh -i ${keyfile} ${username}@192.168.29.185"
+}
+                       
+                    }
+                    post {
+                        success {
+                            echo 'SSH connection completed'
+                        }
+                    }
+                }
+               
+            }
+            post {
+                failure {
+                    echo 'Workflow failed'
+                }
+                success {
+                    echo 'Workflow succeeded'
+                }
+            }
+        }
+    }
+}

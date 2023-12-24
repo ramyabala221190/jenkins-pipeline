@@ -29,15 +29,12 @@ pipeline {
                 stage('Connect using SSH') {
                     steps {
                         echo 'Execute SSH..'
-        withCredentials([sshUserPrivateKey(credentialsId: 'sshConnectionToMyWindows',keyFileVariable:'keyfile', usernameVariable: 'username', passphraseVariable: 'passphrase')]) {
-  // available as an env variable, but will be masked if you try to print it out any which way
-  // note: single quotes prevent Groovy interpolation; expansion is by Bourne Shell, which is what you want
-  echo "${passphrase}"
-  // also available as a Groovy variable
-  // or inside double quotes for string interpolation
-  echo "username is ${username}"
-
-  bat "ssh -i ${keyfile} ${username}@192.168.29.185"
+withCredentials([sshUserPrivateKey(
+    credentialsId: 'sshConnectionToMyWindows',
+    keyFileVariable:'keyfile', 
+    usernameVariable: 'username', 
+    passphraseVariable: 'passphrase')]) {
+  bat "ssh -t -i ${keyfile} ${username}@192.168.29.185"
 }
                        
                     }

@@ -40,7 +40,7 @@ withCredentials([sshUserPrivateKey(
     passphraseVariable: 'passphrase')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
-    bat "ssh ${username} 192.168.29.185 uname -a"
+    bat "ssh -l ${username} 192.168.29.185 uname -a"
 }
 }
                        

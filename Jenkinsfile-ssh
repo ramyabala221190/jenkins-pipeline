@@ -34,10 +34,7 @@ sshagent(['sshConnectionToMyWindows']) {
     bat "ssh -o StrictHostChecking=no -l "
 }
 withCredentials([sshUserPrivateKey(
-    credentialsId: 'sshConnectionToMyWindows',
-    keyFileVariable:'keyfile', 
-    usernameVariable: 'username', 
-    passphraseVariable: 'passphrase')]) {
+    credentialsId: 'sshConnectionToMyWindows',usernameVariable: 'username')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
     bat "ssh -l ${username} 192.168.29.185 uname -a"

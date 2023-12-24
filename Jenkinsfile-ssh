@@ -9,6 +9,10 @@ pipeline {
         timestamps() //Add timestamps to the Console Output
     }
 
+    environment{
+        SSH_TTY="/dev/pty0"
+    }
+
 
     stages {
         stage('Workflow') {

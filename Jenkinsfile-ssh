@@ -38,7 +38,6 @@ withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnectionToMyWindows',usernameVariable: 'username',keyFileVariable:'keyfile',passphraseVariable:'passphrase')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
-    echo 'AuthenticationMethods publickey' >> "/etc/ssh/sshd_config"
     bat "ssh -tt  -vvv -i ${keyfile} -o StrictHostKeyChecking=no -o RequestTTY=yes -l ${username} 192.168.29.185 uname -a"
 } 
 }

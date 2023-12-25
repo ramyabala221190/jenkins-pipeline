@@ -39,10 +39,8 @@ withCredentials([sshUserPrivateKey(
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
     bat '''
-    echo "${keyfile}" | base64 -d > ssh_key
-    chmod 600 ssh_key
-    cat ~/.ssh/*.pub | base64 -d >> ~/.ssh/known_hosts
-    ssh -tt -vvv -i ${ssh_key} ${username}@192.168.29.185 uname -a
+    chmod 600 ${keyfile}
+    ssh -tt -vvv -i ${keyfile} ${username}@192.168.29.185 uname -a
     '''
 }  
 }

@@ -39,8 +39,8 @@ withCredentials([sshUserPrivateKey(
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
     bat '''
-    ssh -tt -vvv root@192.168.29.185 uname -a
-    '''
+ssh -i ~/.ssh/dockerVM_key.pem dockerEnthusiast@172.174.255.79    
+'''
 }  
 }
                        

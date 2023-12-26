@@ -80,7 +80,7 @@ withCredentials([sshUserPrivateKey(
     bat "ssh -i ${keyfile} ${username}@172.174.255.79 \
     docker --version \
     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
-    && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName}
+    && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName} \
     && docker image prune --force \
     && docker ps \
     && docker images"

@@ -71,8 +71,6 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
 
                 stage('Docker deploy to Remote VM'){
                     steps{
-                         stage('Deploy to Remote VM'){
-                    steps{
                         echo 'Execute SSH..'
 withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
@@ -90,8 +88,7 @@ withCredentials([sshUserPrivateKey(
 }
                     }
                 }
-                    }
-                }
+                    
 //                 stage('Docker Deploy and Compose Up') {
                     
 //                     steps {

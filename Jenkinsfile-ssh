@@ -33,7 +33,7 @@ pipeline {
                 stage('Connect using SSH') {
                     steps {
                         echo 'Execute SSH..'
-
+echo "export DOCKER_HOST=tcp://X.X.X.X:2375" >> ~/.bashrc && source ~/.bashrc
 withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.

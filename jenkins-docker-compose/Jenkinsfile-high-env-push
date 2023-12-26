@@ -87,8 +87,8 @@ withCredentials([sshUserPrivateKey(
     && docker images"
 }  
 }
-                    }
-                }
+    }
+}
                     
 //                 stage('Docker Deploy and Compose Up') {
                     

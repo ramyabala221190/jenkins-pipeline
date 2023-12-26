@@ -81,6 +81,7 @@ withCredentials([sshUserPrivateKey(
     docker --version \
     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
     && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName} \
+    && docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json \
     && docker image prune --force \
     && docker ps \
     && docker images"

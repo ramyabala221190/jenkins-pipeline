@@ -40,6 +40,14 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }
                 }
 
+                stage('Docker login'){
+                    steps {
+                   echo 'Logging in to DockerHub'
+                       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
+                    //    bat  "docker image prune --force"
+                    }
+                }
+
                 stage('Docker Pull and Tag Image') {
 
                     steps{
@@ -49,13 +57,6 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }  
                 }
 
-                stage('Docker login'){
-                    steps {
-                   echo 'Logging in to DockerHub'
-                       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
-                    //    bat  "docker image prune --force"
-                    }
-                }
                 stage('Docker Push') {
                     
                     steps{

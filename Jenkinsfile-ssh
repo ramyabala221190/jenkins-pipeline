@@ -41,8 +41,7 @@ withCredentials([sshUserPrivateKey(
     bat "ssh -i ${keyfile} ${username}@172.174.255.79 \
     docker version \
     docker ps \
-    docker images
-    "
+    docker images"
 }  
 }
                        

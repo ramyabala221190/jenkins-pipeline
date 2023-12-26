@@ -24,6 +24,10 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
         containerName="angular-nginx-${env.environment}-container"
         serviceName="nginx-${env.environment}"
+        DOCKER_HOST="tcp://172.174.255.79:2375" //connect to the remote VM's Docker daemon and not the local daemon   
+        /*
+You need to expose the 2375 port in the VM and also write an inbound rule to allow TCP connection to 2375
+        */
     }
 
     stages{
@@ -49,7 +53,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     steps {
                    echo 'Logging in to DockerHub'
                       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
-                      bat  "docker image prune --force"
+                    //   bat  "docker image prune --force"
                     }
                 }
                 stage('Docker Push') {
@@ -62,21 +66,41 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                         success {
                             bat "docker logout" //logout from docker
                         }
+                  
                     }
                 }
-                stage('Docker Deploy and Compose Up') {
+
+                stage('Deploy to Remote VM'){
+                    steps{
+                        echo 'Execute SSH..'
+withCredentials([sshUserPrivateKey(
+    credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
+        //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
+        sshagent(['sshConnectionToMyWindows']) {
+    bat "ssh -i ${keyfile} ${username}@172.174.255.79 \
+    docker --version \
+    && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
+    && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName}
+    && docker image prune --force \
+    && docker ps \
+    && docker images"
+}  
+}
+                    }
+                }
+//                 stage('Docker Deploy and Compose Up') {
                     
-                    steps {
-                        /*
-connect to a remote server, pull the docker image and run docker compose up
-                        */
-                        echo 'Running Docker Compose Up'
-                        script{
-    bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName}" //- d ensures it runs in deatched mode
-                            //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
-                        }
-                    }
-                }
+//                     steps {
+//                         /*
+// connect to a remote server, pull the docker image and run docker compose up
+//                         */
+//                         echo 'Running Docker Compose Up'
+//                         script{
+//     bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName}" //- d ensures it runs in deatched mode
+//                             //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
+//                         }
+//                     }
+//                 }
             }
         }
     }

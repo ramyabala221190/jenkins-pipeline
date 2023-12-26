@@ -24,7 +24,10 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
         containerName="angular-nginx-${env.environment}-container"
         serviceName="nginx-${env.environment}"
-        DOCKER_HOST="tcp://172.174.255.79:2375" //connect to the remote VM's Docker daemon and not the local daemon   
+        server_ip="172.174.255.79"
+        docker_daemon_port=2375
+        DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}" 
+        //connect to the remote VM's Docker daemon and not the local daemon         
         /*
 You need to expose the 2375 port in the VM and also write an inbound rule to allow TCP connection to 2375
         */
@@ -77,7 +80,7 @@ withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
-    bat "ssh -i ${keyfile} ${username}@172.174.255.79 \
+    bat "ssh -i ${keyfile} ${username}@${server_ip} \
     docker --version \
     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
     && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName} \

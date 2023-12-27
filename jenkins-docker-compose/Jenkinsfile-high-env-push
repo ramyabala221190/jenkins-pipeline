@@ -14,12 +14,10 @@ pipeline {
           /*
 readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         */
-        def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
         DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
         environ="${env.environment}" //environment info from pipeline input
         tag="${env.tag}"
         branchName="${env.Branch}"
-        appPort="${envConfig.port}" //decide the application port based on the environment
         containerPort=80 //fix the container port
         fromRepositoryName=envRepoMapping(env.environment) //decide the repository from which the image needs to be pulled
         toRepositoryName="angular-nginx-${env.environment}" //the repository to which the image needs to be pushed
@@ -44,6 +42,11 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                 }
 
                 stage('Docker Pull and Tag Image') {
+                    environment{
+                    def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
+                     appPort="${envConfig.port}" //decide the application port based on the environment
+
+                    }
 
                     steps{
                         echo 'Pulling latest image from low enviornment repository in DockerHub'

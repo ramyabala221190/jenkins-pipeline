@@ -83,8 +83,8 @@ withCredentials([sshUserPrivateKey(
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
     bat "ssh -i ${keyfile} ${username}@${server_ip} \
-    && sudo systemctl daemon-reload \
-    && sudo systemctl restart docker \
+    && systemctl daemon-reload \
+    && systemctl restart docker \
     && docker --version \
     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
     && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName} \

@@ -10,7 +10,7 @@ pipeline {
     }
 
     environment{
-    DOCKER_HOST="tcp://172.174.255.79:2375"   
+    DOCKER_HOST="tcp://20.51.236.140:2375"   
 }
 
 
@@ -37,10 +37,8 @@ withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
         //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
         sshagent(['sshConnectionToMyWindows']) {
-    bat "ssh -i ${keyfile} ${username}@172.174.255.79 \
-    docker --version \
-    && docker ps \
-    && docker images"
+    bat "ssh -i ${keyfile} ${username}@20.51.236.140 \
+    uname -a"
 }  
 }
                        

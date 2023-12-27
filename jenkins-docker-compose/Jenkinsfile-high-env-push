@@ -23,7 +23,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         toRepositoryName="angular-nginx-${env.environment}" //the repository to which the image needs to be pushed
         containerName="angular-nginx-${env.environment}-container" //container name
         serviceName="nginx-${env.environment}"
-        server_ip="172.174.255.79"
+        server_ip="20.51.236.140"
         docker_daemon_port=2375
         DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}" 
     }
@@ -83,7 +83,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
 withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
     sshagent(['sshConnectionToMyWindows']) {
-    bat "ssh -i ${keyfile} ${username}@${server_ip} \
+    bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     docker --version \
     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${tag} \
     && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName} \

@@ -9,27 +9,9 @@ pipeline {
         timestamps() //Add timestamps to the Console Output
     }
 
-    environment{
-    DOCKER_HOST="tcp://20.51.236.140:2375"   
-}
-
-
     stages {
         stage('Workflow') {
             stages {
-                stage('Clone') {
-                    steps {
-                        echo 'Cloning...'
-                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
-                        git 'https://github.com/ramyabala221190/jenkinsTest.git'
-                    }
-                    post {
-                        success {
-                            echo 'Clone step completed'
-                        }
-                    }
-                }
-
                 stage('Connect using SSH') {
                     steps {
                         echo 'Execute SSH..'
@@ -41,8 +23,7 @@ withCredentials([sshUserPrivateKey(
     uname -a"
 }  
 }
-                       
-                    }
+}
                     post {
                         success {
                             echo 'SSH connection completed'
@@ -50,14 +31,6 @@ withCredentials([sshUserPrivateKey(
                     }
                 }
                
-            }
-            post {
-                failure {
-                    echo 'Workflow failed'
-                }
-                success {
-                    echo 'Workflow succeeded'
-                }
             }
         }
     }

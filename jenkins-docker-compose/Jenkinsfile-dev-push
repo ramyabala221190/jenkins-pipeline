@@ -25,8 +25,8 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         containerName="angular-nginx-${env.environment}-container"
         serviceName="nginx-${env.environment}"
         server_ip="172.174.255.79"
-        DOCKER_HOST="tcp://172.174.255.79:2375" 
-    }
+        docker_daemon_port=2375
+        DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     }
 
     stages{
         stage('Docker Workflow') {

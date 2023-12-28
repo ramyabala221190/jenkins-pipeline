@@ -14,19 +14,20 @@ pipeline {
         /*
 readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         */
-        //def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
         DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
         environ="${env.environment}" //environment info from pipeline input
         buildNumber="${env.BUILD_NUMBER}"
         branchName="${env.Branch}"
-        //appPort="${envConfig.port}" //fix the application port
         containerPort=80 //fix the container port
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
         containerName="angular-nginx-${env.environment}-container"
         serviceName="nginx-${env.environment}"
         server_ip="20.51.236.140"
         docker_daemon_port=2375
-        DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     }
+        DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
+        def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
+        appPort="${envConfig.port}" //decide the application port based on the environment
+        }
 
     stages{
         stage('Docker Workflow') {
@@ -41,11 +42,6 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                 }
               
                 stage('Docker Build') {
-                     environment{
-                    def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-                     appPort="${envConfig.port}" //decide the application port based on the environment
-
-                    }
                     steps {
                         echo 'Running Docker Compose build'
                         bat  "docker compose -f docker/docker-compose.yml build ${serviceName}"
@@ -93,7 +89,7 @@ withCredentials([sshUserPrivateKey(
 }
                     }
                 }
-//                 stage('Docker Deploy and Compose Up') {
+//                 stage('Docker Compose up to run application locally') {
                     
 //                     steps {
 //                         /*

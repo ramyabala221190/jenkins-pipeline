@@ -6,7 +6,7 @@ pipeline {
     agent any
 
     options {
-        skipDefaultCheckout(true) //prevent default checkout of git branch
+       // skipDefaultCheckout(true) //prevent default checkout of git branch
         timestamps() //Add timestamps to the Console Output
     }
 

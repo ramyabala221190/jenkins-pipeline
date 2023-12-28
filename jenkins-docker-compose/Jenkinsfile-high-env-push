@@ -26,8 +26,8 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         server_ip="20.51.236.140"
         docker_daemon_port=2375
         DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}" 
-        // def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-        // appPort="${envConfig.port}" //decide the application port based on the environment
+        def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
+        appPort="${envConfig.port}" //decide the application port based on the environment
     }
 
     stages{
@@ -73,10 +73,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                 }
 
                 stage('Docker deploy to Remote VM'){
-environment{
-def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-appPort="${envConfig.port}" //decide the application port based on the environment
-}
+
                     steps{
                         echo 'Execute SSH..'
 withCredentials([sshUserPrivateKey(

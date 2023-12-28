@@ -75,8 +75,6 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                         echo 'Execute SSH..'
 withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
-        //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
-        sshagent(['sshConnection']) {
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     docker --version \
     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
@@ -85,7 +83,6 @@ withCredentials([sshUserPrivateKey(
     && docker image prune --force \
     && docker ps \
     && docker images"
-}  
 }
                     }
                 }

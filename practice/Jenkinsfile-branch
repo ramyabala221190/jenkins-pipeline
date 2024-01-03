@@ -34,18 +34,6 @@ pipeline {
                     }
                 }
 
-                stage('Install') {
-                    steps {
-                        echo 'Installing..'
-                        bat 'npm install'
-                    }
-                    post {
-                        success {
-                            echo 'Install step completed'
-                        }
-                    }
-
-                }
                 stage('Build step')  {
                    steps{
                     bat "docker build -t env-variable-angular ."
@@ -54,7 +42,7 @@ pipeline {
 
                 stage('Run the App'){
                     steps{
-                        bat "docker run -d -p 8081:80 -t env-variable-angular -name env-variable-angular-container"
+                        bat "docker run -d -p 8081:80 -t env-variable-angular --name env-variable-angular-container"
                     }
                 }
 

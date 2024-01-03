@@ -34,15 +34,10 @@ pipeline {
                         bat 'npm install'
                     }
                 }
-                stage('Build step')  {
-                    steps {
-                        bat "npm run build"
-                    }
-                }
 
                 stage('Run step') {
                     steps {
-                       bat "npm run jenkinsStart"
+                       bat "forever start start"
                     }
                 }
             }

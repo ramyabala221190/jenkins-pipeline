@@ -36,7 +36,7 @@ pipeline {
 
                 stage('Build step')  {
                    steps{
-                    bat "docker build -t env-variable-angular:${env.BUILD_NUMBER} --build-args jenkins_build_number=${jenkins_build_number}  ."
+                    bat "docker build -t env-variable-angular:${env.BUILD_NUMBER} --build-arg jenkins_build_number=${jenkins_build_number}  ."
                    }
                 }
 

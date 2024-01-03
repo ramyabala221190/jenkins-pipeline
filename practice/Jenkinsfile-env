@@ -5,7 +5,9 @@ pipeline {
     //always use double quotes for echo so that it works with accessing environmental variables
     //dont use variables in stage names. error will be thrown
 
-    options {
+    tools { nodejs 'Node' }
+ 
+   options {
         skipDefaultCheckout(true) //prevent default checkout of git branch
         timestamps() //Add timestamps to the Console Output
     }
@@ -14,33 +16,37 @@ pipeline {
         jenkins_build_number="${env.BUILD_NUMBER}"
     }
 
+
     stages {
         stage('Workflow') {
             stages {
                 stage('Clone') {
                     steps {
                         echo 'Cloning...'
-                        cleanWs()
+                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                         git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/envrionment-var-angular.git'
-
                     }
                 }
 
+                stage('Install') {
+                    steps {
+                        echo 'Installing..'
+                        bat 'npm install'
+                    }
+                }
                 stage('Build step')  {
-                   steps{
-                    bat "docker build -t env-variable-angular:${env.BUILD_NUMBER} --build-arg jenkins_build_number=${jenkins_build_number}  ."
-                   }
-                }
-
-                stage('Run the App'){
-                    steps{
-                        bat "docker run --env runvar='i was set at runtime' -dp 8081:80 -it env-variable-angular:${env.BUILD_NUMBER}"
+                    steps {
+                        bat "npm run build"
                     }
                 }
 
-               
+                stage('Run step') {
+                    steps {
+                       bat "npm run jenkinsStart"
+                    }
+                }
             }
+            
         }
     }
-
 }

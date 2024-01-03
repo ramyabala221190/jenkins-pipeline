@@ -37,7 +37,7 @@ pipeline {
 
                 stage('Run step') {
                     steps {
-                       bat "forever start start"
+                       bat "forever start -c 'npm run start' ./"
                     }
                 }
             }

@@ -19,30 +19,17 @@ pipeline {
     stages {
         stage('Workflow') {
             stages {
-                stage('Clone') {
-                    steps {
-                        echo 'Cloning...'
-                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
-                        //we are using the installed Git plugin to clone the branch from the repo
-                        git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/envrionment-var-angular.git'
-
-                    }
-                    post {
-                        success {
-                            echo 'Clone step completed'
-                        }
-                    }
-                }
+                
 
                 stage('Build step')  {
                    steps{
-                    bat "docker build -f ./Dockerfile -t env-variable-angular ."
+                    bat "docker build github.com/ramyabala221190/envrionment-var-angular.git#${env.Branch} -t env-variable-angular ."
                    }
                 }
 
                 stage('Run the App'){
                     steps{
-                        bat "docker run -d -p 8081:80 -t env-variable-angular --name env-variable-angular-container"
+                        bat "docker run -dp 8081:80 -it env-variable-angular --name env-variable-angular-container"
                     }
                 }
 

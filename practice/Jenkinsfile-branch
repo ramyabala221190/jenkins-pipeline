@@ -42,7 +42,7 @@ pipeline {
 
                 stage('Run the App'){
                     steps{
-                        bat "docker run -dp 8081:80 -it env-variable-angular --name env-variable-angular-container"
+                        bat "docker run -dp 8081:80 -it env-variable-angular:${env.BUILD_NUMBER}"
                     }
                 }
 

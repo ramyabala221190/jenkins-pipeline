@@ -13,7 +13,7 @@ pipeline {
     }
 
     environment{
-        jenkins_build_number=${BUILD_NUMBER}
+        jenkins_build_number="${BUILD_NUMBER}"
     }
 
     stages {

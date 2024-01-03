@@ -17,7 +17,6 @@ pipeline {
                         echo 'Execute SSH..'
 withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
-        //13:28:20  Pseudo-terminal will not be allocated because stdin is not a terminal.
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@20.51.236.140 \
     uname -a"
  

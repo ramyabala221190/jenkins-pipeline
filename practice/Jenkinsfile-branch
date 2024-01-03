@@ -11,6 +11,10 @@ pipeline {
         timestamps() //Add timestamps to the Console Output
     }
 
+    environment{
+        jenkins_build_number=${BUILD_NUMBER}
+    }
+
     stages {
         stage('Workflow') {
             stages {
@@ -19,7 +23,7 @@ pipeline {
                         echo 'Cloning...'
                         cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                         //we are using the installed Git plugin to clone the branch from the repo
-                        git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/jenkinsTest.git'
+                        git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/envrionment-var-angular.git'
 
                     }
                     post {
@@ -48,8 +52,8 @@ pipeline {
                     //     environment name: 'environment', value: 'prod'
                     // }
                     steps {
-                        echo "Building using ${environment} configuration"
-                        bat "npm run build:${environment}"
+                        echo "Building"
+                        bat "npm run build"
 
                     }
                     post {
@@ -59,36 +63,42 @@ pipeline {
                     }
                 }
 
-                stage('Test') {
-                    steps {
-                        echo 'Testing..'
-                        bat 'npm run test'
-                    }
-                    post {
-                        success {
-                            echo 'Test step completed'
-                        }
+                stage('Run the App'){
+                    steps{
+                        bat 'npm run serve'
                     }
                 }
 
-                stage('Deploy') {
-                    steps {
-                        echo 'Deploying....'
-                        //fileOperations plugin
-                        fileOperations([fileCopyOperation(
-                                  flattenFiles: true, //includes only files
-                                  includes: 'dist/*/**',
-                                  targetLocation: "C:/Users/User/nginx/nginx-1.25.3/html/${environment}")]
-                                  )
+                // stage('Test') {
+                //     steps {
+                //         echo 'Testing..'
+                //         bat 'npm run test'
+                //     }
+                //     post {
+                //         success {
+                //             echo 'Test step completed'
+                //         }
+                //     }
+                // }
 
-                    }
-                    post {
-                        success {
-                            echo "Deploy step for #${env.BUILD_NUMBER} in ${environment} environment completed"
-                        }
-                    }
+                // stage('Deploy') {
+                //     steps {
+                //         echo 'Deploying....'
+                //         //fileOperations plugin
+                //         fileOperations([fileCopyOperation(
+                //                   flattenFiles: true, //includes only files
+                //                   includes: 'dist/*/**',
+                //                   targetLocation: "C:/Users/User/nginx/nginx-1.25.3/html/${environment}")]
+                //                   )
 
-                }
+                //     }
+                //     post {
+                //         success {
+                //             echo "Deploy step for #${env.BUILD_NUMBER} in ${environment} environment completed"
+                //         }
+                //     }
+
+                // }
 
             }
             post {

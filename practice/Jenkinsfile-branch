@@ -23,7 +23,7 @@ pipeline {
 
                 stage('Build step')  {
                    steps{
-                    bat "docker build github.com/ramyabala221190/envrionment-var-angular.git#${env.Branch} -t env-variable-angular ."
+                    bat "docker build github.com/ramyabala221190/envrionment-var-angular.git#${env.Branch} -t env-variable-angular"
                    }
                 }
 

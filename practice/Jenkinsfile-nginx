@@ -48,8 +48,7 @@ withCredentials([sshUserPrivateKey(
     credentialsId: 'sshNginx',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     cp dist/*/** /var/www/html/mynginx \
-    cp /etc/nginx/sites-enabled/nginx.config /etc/nginx/nginx.conf \
-    sudo systemctl reload nginx"
+    cp /etc/nginx/sites-enabled/nginx.config /etc/nginx/nginx.conf"
 }
                     }
                 }

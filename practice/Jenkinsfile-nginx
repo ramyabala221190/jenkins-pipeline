@@ -44,11 +44,12 @@ pipeline {
           
                     steps{
                         echo 'Execute SSH..'
-withCredentials([sshUserPrivateKey(
-    credentialsId: 'sshNginx',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
-    bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
-    scp -r dist/custom-webpack -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip}:/usr/share/nginx/html"
-}
+sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx', 
+transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, 
+flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', 
+remoteDirectory: '/usr/share/nginx/html', remoteDirectorySDF: false, removePrefix: '', 
+sourceFiles: 'dist/custom-webpack')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, 
+verbose: false)])
                     }
                 }
 

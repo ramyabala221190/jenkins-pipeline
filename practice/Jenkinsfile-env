@@ -37,7 +37,7 @@ pipeline {
 
                 stage('Run step') {
                     steps {
-                       bat "pm2 start npm -- start"
+                       bat "pm2 start npm run start"
                     }
                 }
             }

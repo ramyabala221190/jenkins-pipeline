@@ -47,7 +47,7 @@ pipeline {
 withCredentials([sshUserPrivateKey(
     credentialsId: 'sshNginx',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
-    cp dist/*/** /usr/share/nginx/html"
+    cp dist/custom-webpack /usr/share/nginx/html"
 }
                     }
                 }

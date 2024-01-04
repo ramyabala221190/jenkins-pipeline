@@ -1,0 +1,59 @@
+/* groovylint-disable NestedBlockDepth */
+/* groovylint-disable-next-line CompileStatic */
+
+
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true) //prevent default checkout of git branch
+        timestamps() //Add timestamps to the Console Output
+    }
+
+    environment{
+          server_ip="172.203.235.150"
+        }
+
+    stages{
+        stage('Docker Workflow') {
+            stages{
+                stage('Clone') {
+                    steps {
+                        echo 'Cloning...'
+                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
+                        //we are using the installed Git plugin to clone the branch from the repo
+                        git branch: "${branchName}", url: 'https://github.com/ramyabala221190/jenkinsTest.git'
+                    }
+                
+            }
+
+            stage('Install modules'){
+                steps{
+                    bat "npm install"
+                }
+            }
+              
+                stage('Build project') {
+                    steps {
+                        bat  "npm run build"
+                    }
+                }
+
+
+                stage('Deploy to Remote VM'){
+          
+                    steps{
+                        echo 'Execute SSH..'
+withCredentials([sshUserPrivateKey(
+    credentialsId: 'sshNginx',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
+    bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
+    uname -a"
+}
+                    }
+                }
+
+            }
+        }
+    }
+
+}

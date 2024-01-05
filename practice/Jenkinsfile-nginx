@@ -37,6 +37,7 @@ pipeline {
                     steps {
                         bat  "npm run build"
                     }
+
                 }
 
 
@@ -44,9 +45,8 @@ pipeline {
           
                     steps{
                         echo 'Execute SSH..'
+                        bat "dir ${env.JENKINS_HOME}/workspace/${env.JOB_NAME}/dist/"
                         echo "${env.JENKINS_HOME} ${env.JOB_NAME}"
-                        
-sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: "cd ${env.JENKINS_HOME}/workspace/${env.JOB_NAME}/dist/*/** && DIR", execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: ''), sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/var/www/html/', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '${env.JENKINS_HOME}/workspace/${env.JOB_NAME}/dist/*/**')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
                     }
                 }
 

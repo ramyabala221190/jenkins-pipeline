@@ -45,12 +45,13 @@ pipeline {
           
                     steps{
                         echo 'Execute SSH..'
-                        bat "dir ${env.JENKINS_HOME}/workspace/${env.JOB_NAME}/dist/"
+                        def dirPath="${env.JENKINS_HOME}"+'\workspace'+"${env.JOB_NAME}"+'\dist'
+                        bat "dir ${dirPath}"
                         echo "${env.JENKINS_HOME} ${env.JOB_NAME}"
                     }
                 }
 
-            }
+            
         }
     }
 

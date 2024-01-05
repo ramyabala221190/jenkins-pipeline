@@ -44,12 +44,8 @@ pipeline {
           
                     steps{
                         echo 'Execute SSH..'
-sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx', 
-transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, 
-flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', 
-remoteDirectory: '/var/www/html/mynginx/', remoteDirectorySDF: false, removePrefix: '', 
-sourceFiles: 'dist/custom-webpack/*')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, 
-verbose: false)])
+sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx', transfers: 
+[sshTransfer(cleanRemote: false, excludes: '', execCommand: 'cd /usr/share/nginx/html/', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/', remoteDirectorySDF: false, removePrefix: '', sourceFiles: ''), sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'dist/*/**')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
                     }
                 }
 

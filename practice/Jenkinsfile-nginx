@@ -10,10 +10,6 @@ pipeline {
         timestamps() //Add timestamps to the Console Output
     }
 
-    environment{
-          server_ip="172.203.235.150"
-        }
-
     stages{
         stage('Docker Workflow') {
             stages{
@@ -44,10 +40,28 @@ pipeline {
                 stage('Deploy to Remote VM'){
           
                     steps{
-                        echo 'Execute SSH..'
-                        bat "dir ${WORKSPACE}"
-                        bat "dir ${WORKSPACE}\\dist"
-sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/usr/share/nginx/html/', remoteDirectorySDF: false, removePrefix: 'dist/custom-webpack', sourceFiles: 'dist/custom-webpack/**/*')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: true)])
+                        echo 'Execute SSH Publisher'
+
+sshPublisher(
+publishers: [sshPublisherDesc(configName: 'testingNginx', 
+transfers: 
+[sshTransfer(
+    cleanRemote: false, 
+    excludes: '', 
+    execCommand: '', 
+    execTimeout: 120000, 
+    flatten: false, 
+    makeEmptyDirs: false, 
+    noDefaultExcludes: false, 
+    patternSeparator: '[, ]+', 
+    remoteDirectory: '/usr/share/nginx/html/', 
+    remoteDirectorySDF: false, 
+    removePrefix: 'dist/custom-webpack', 
+    sourceFiles: 'dist/custom-webpack/*/**')], 
+    usePromotionTimestamp: false, 
+    useWorkspaceInPromotion: false, 
+    verbose: true)
+])
 }
             }
 

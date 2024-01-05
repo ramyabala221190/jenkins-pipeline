@@ -44,13 +44,13 @@ pipeline {
           
                     steps{
                         echo 'Execute SSH..'
-                        echo "${env.JENKINS_HOME}"
+                        echo "${env.JENKINS_HOME} ${env.JOB_NAME}"
 sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx', 
 transfers: [sshTransfer(
     cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, 
     makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', 
     remoteDirectory: '/var/www/html/', remoteDirectorySDF: false, removePrefix: '', 
-    sourceFiles: './dist/*/**')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, 
+    sourceFiles: "${env.JENKINS_HOME}/workspace/${env.JOB_NAME}/dist/*/**")], usePromotionTimestamp: false, useWorkspaceInPromotion: false, 
     verbose: true)])
                     }
                 }

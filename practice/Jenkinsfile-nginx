@@ -10,8 +10,12 @@ pipeline {
         timestamps() //Add timestamps to the Console Output
     }
 
+    environment{
+        jenkins_build_number="${env.BUILD_NUMBER}"
+    }
+
     stages{
-        stage('Docker Workflow') {
+        stage('Nginx Workflow') {
             stages{
                 stage('Clone') {
                     steps {

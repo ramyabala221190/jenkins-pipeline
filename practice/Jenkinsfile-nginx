@@ -46,7 +46,7 @@ pipeline {
                     steps{
                         echo 'Execute SSH..'
                         bat "dir ${WORKSPACE}"
-                        bat "dir ${WORKSPACE}/dist"
+                        bat "dir ${WORKSPACE}\dist"
                         echo "${env.JENKINS_HOME} ${env.JOB_NAME}"
                     }
                 }

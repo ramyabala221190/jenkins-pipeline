@@ -47,13 +47,14 @@ pipeline {
                         echo 'Execute SSH..'
                         bat "dir ${WORKSPACE}"
                         bat "dir ${WORKSPACE}\\dist"
-sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx')])                
-}
+                        sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx')])
+                  }
             }
 
     }
 
   }
+}
 }
 
 

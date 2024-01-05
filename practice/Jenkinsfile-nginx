@@ -50,9 +50,8 @@ pipeline {
                         echo "${env.JENKINS_HOME} ${env.JOB_NAME}"
                     }
                 }
+            }
 
-            
-        }
     }
 
   }

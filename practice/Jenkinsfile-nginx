@@ -47,8 +47,7 @@ pipeline {
                         echo 'Execute SSH..'
                         bat "dir ${WORKSPACE}"
                         bat "dir ${WORKSPACE}\\dist"
-                        sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/var/www/html/', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '${WORKSPACE}\\dist\\*\\**')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
-                    }
+sshPublisher(publishers: [sshPublisherDesc(configName: 'testingNginx', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/var/www/html/', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '${WORKSPACE}\\dist\\*\\**')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: true)])                    }
                 }
             }
 

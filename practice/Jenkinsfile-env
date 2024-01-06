@@ -17,31 +17,68 @@ pipeline {
     }
 
 
-    stages {
-        stage('Workflow') {
-            stages {
+   stages{
+        stage('Nginx Workflow') {
+            stages{
                 stage('Clone') {
                     steps {
                         echo 'Cloning...'
                         cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
+                        //we are using the installed Git plugin to clone the branch from the repo
                         git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/envrionment-var-angular.git'
                     }
-                }
+                
+            }
 
-                stage('Install') {
-                    steps {
-                        echo 'Installing..'
-                        bat 'npm install'
-                    }
-                }
-
-                stage('Run step') {
-                    steps {
-                       bat "npm run pm2Serve"
-                    }
+            stage('Install modules'){
+                steps{
+                    bat "npm install"
                 }
             }
-            
-        }
+              
+                stage('Build project') {
+                    environment{
+                        var_before_build="Setting a variable right before the build"
+                    }
+                    steps {
+                        bat  "npm run build"
+                    }
+
+                }
+
+
+                stage('Deploy to Remote VM'){
+           environment{
+                        var_before_running="Setting a variable right before deploying"
+            }
+                    steps{
+                        echo 'Execute SSH Publisher'
+
+sshPublisher(
+publishers: [sshPublisherDesc(configName: 'testingNginx', 
+transfers: 
+[sshTransfer(
+    cleanRemote: false, 
+    excludes: '', 
+    execCommand: '', 
+    execTimeout: 120000, 
+    flatten: false, 
+    makeEmptyDirs: false, 
+    noDefaultExcludes: false, 
+    patternSeparator: '[, ]+', 
+    remoteDirectory: '/usr/share/nginx/html/', 
+    remoteDirectorySDF: false, 
+    removePrefix: 'dist/custom-webpack', 
+    sourceFiles: 'dist/custom-webpack/*/**')], 
+    usePromotionTimestamp: false, 
+    useWorkspaceInPromotion: false, 
+    verbose: true)
+])
+}
+            }
+
     }
+
+  }
+}
 }

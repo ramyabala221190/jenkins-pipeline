@@ -68,8 +68,8 @@ transfers:
     patternSeparator: '[, ]+', 
     remoteDirectory: '/usr/share/nginx/html/', 
     remoteDirectorySDF: false, 
-    removePrefix: 'dist/custom-webpack', 
-    sourceFiles: 'dist/custom-webpack/*/**')], 
+    removePrefix: 'dist/angular-nginx', 
+    sourceFiles: 'dist/angular-nginx/*/**')], 
     usePromotionTimestamp: false, 
     useWorkspaceInPromotion: false, 
     verbose: true)

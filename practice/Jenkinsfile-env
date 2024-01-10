@@ -25,7 +25,7 @@ pipeline {
                         echo 'Cloning...'
                         cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                         //we are using the installed Git plugin to clone the branch from the repo
-                        git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/envrionment-var-angular.git'
+                        git branch: "${env.Branch}", url: 'https://github.com/ramyabala221190/angular-env-file.git'
                     }
                 
             }

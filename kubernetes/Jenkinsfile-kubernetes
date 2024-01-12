@@ -61,13 +61,13 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                 stage('Deploying to Kubernetes'){
                     steps{
                         bat "kubectl delete pods -l=app=angular-kube-demo"
+                        //delete any existing pods with the same name
                         bat "kubectl apply -f kubernetes/deployment.yaml"
                         script{
                         def podName=bat "kubectl get pods -o name -l=app=angular-kube-demo"
                         //def podName = bat "kubectl get pods -l 'app in (angular-kube-demo)'"
+                         bat "kubectl port-forward ${podName} 8081:80"
                         }
-                        echo "${podName}"
-                        bat "kubectl port-forward ${podName} 8081:80"
 
                     }
                 }

@@ -61,7 +61,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                 stage('Deploying to Kubernetes'){
                     steps{
                         script{
-                        def podName = bat "kubectl get pods -l 'app in (angular-kube-demo)' -o name"
+                        def podName = bat "kubectl get pods -l 'app in (angular-kube-demo)'"
                         }
                         bat "kubectl apply -f kubernetes/deployment.yaml"
                         bat "kubectl port-forward ${podName} 8081:80"

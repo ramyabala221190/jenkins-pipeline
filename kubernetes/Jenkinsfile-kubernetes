@@ -64,7 +64,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                         //delete any existing pods with the same name
                         bat "kubectl apply -f kubernetes/deployment.yaml"
                         script{
-                        def podName=bat "kubectl get pods -o name -l=app=angular-kube-demo"
+                        podName=bat "kubectl get pods -o name -l=app=angular-kube-demo"
 
                         echo "${podName}"
                         //def podName = bat "kubectl get pods -l 'app in (angular-kube-demo)'"

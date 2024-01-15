@@ -32,7 +32,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
 
  stage('Docker build'){
     steps{
-    bat "docker build -f docker/Dockerfile -t ${DOCKER_HUB_CRED_USR}/${toRepositoryName} ."
+    bat "docker build -f docker/Dockerfile -t ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} ."
     }
  }
 
@@ -47,7 +47,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                     
                     steps{
                         echo 'Pushing image to DockerHub'
-                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}"
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
                     }
                     post {
                         success {
@@ -62,8 +62,8 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                         /*Installed Content Replace Plugin*/
                         contentReplace(configs: [fileContentReplaceConfig(
                             configs: [fileContentReplaceItemConfig(
-                                replace: "${DOCKER_HUB_CRED_USR}/${toRepositoryName}:latest", 
-                                search: '/angular-kube-image/')], 
+                                replace: "${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}", 
+                                search: '/angular-kube-image/$')], 
                                 fileEncoding: 'UTF-8', 
                                 filePath: 'kubernetes/deployment.yaml', 
                                 lineSeparator: 'Windows')])

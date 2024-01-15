@@ -63,7 +63,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                         contentReplace(configs: [fileContentReplaceConfig(
                             configs: [fileContentReplaceItemConfig(
                                 replace: "${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}", 
-                                search: '/angular-kube-image/$')], 
+                                search: 'angular-kube-image')], 
                                 fileEncoding: 'UTF-8', 
                                 filePath: 'kubernetes/deployment.yaml', 
                                 lineSeparator: 'Windows')])

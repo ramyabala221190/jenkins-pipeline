@@ -65,16 +65,24 @@ stage('Docker Push') {
                     }
                 }
 
-stage('Docker image pull'){
+stage('Update image name in higher env'){
     when{
         environment name: 'environment', value: 'qa'
     }
     steps{
-        bat "docker image pull ${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.tag}"
-    }
+contentReplace(configs: [fileContentReplaceConfig(
+                            configs: [fileContentReplaceItemConfig(
+                                replace: "${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.tag}", 
+                                search: 'angular-kube-image')], 
+                                fileEncoding: 'UTF-8', 
+                                filePath: "kubernetes/deployments/${env.environment}-deployment.yaml", 
+                                lineSeparator: 'Windows')])    }
 }
 
                 stage('Update image name'){
+                     when{
+        environment name: 'environment', value: 'dev'
+    }
                     steps{
                         /*Installed Content Replace Plugin*/
                         /*

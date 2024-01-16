@@ -31,7 +31,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
 
  stage('Docker build'){
      when{
-        environment 'dev'
+        environment name: 'environment', value: 'dev'
     }
     steps{
     bat "docker build -f docker/Dockerfile -t ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} ."
@@ -40,7 +40,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
 
   stage('Docker login'){
     when{
-        environment 'dev'
+        environment name: 'environment', value: 'dev'
     }
                     steps {
                    echo 'Logging in to DockerHub'
@@ -50,7 +50,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                 }
 stage('Docker Push') {
      when{
-        environment 'dev'
+        environment name: 'environment', value: 'dev'
     }
                     
                     steps{
@@ -67,7 +67,7 @@ stage('Docker Push') {
 
 stage('Docker image pull'){
     when{
-        environment 'qa'
+        environment name: 'environment', value: 'qa'
     }
     steps{
         bat "docker image pull ${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.tag}"

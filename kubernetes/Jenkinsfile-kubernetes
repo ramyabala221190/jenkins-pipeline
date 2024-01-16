@@ -68,7 +68,7 @@ Replacing the temporary image name in deployment.yaml with the actual image name
                                 replace: "${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}", 
                                 search: 'angular-kube-image')], 
                                 fileEncoding: 'UTF-8', 
-                                filePath: 'kubernetes/deployment.yaml', 
+                                filePath: "kubernetes/deployments/${env.environment}-deployment.yaml", 
                                 lineSeparator: 'Windows')])
                     }
                 }

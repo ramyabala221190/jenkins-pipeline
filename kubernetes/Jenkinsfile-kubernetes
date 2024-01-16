@@ -80,8 +80,8 @@ The deployment controller will ensure that the no of pods are as desired. by def
 have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
 You do not have to bother about the no of pods/container. The deployment controller takes care of it.
                         */
-                        bat "kubectl create -f kubernetes/config-map/dev-config.yaml"
-                        bat "kubectl create -f kubernetes/config-map/qa-config.yaml"
+                        bat "kubectl apply -f kubernetes/config-map/dev-config.yaml"
+                        bat "kubectl apply -f kubernetes/config-map/qa-config.yaml"
                         bat "kubectl apply -f kubernetes/deployment.yaml"
                         bat "kubectl apply -f kubernetes/service.yaml"
                         bat "kubectl get all"

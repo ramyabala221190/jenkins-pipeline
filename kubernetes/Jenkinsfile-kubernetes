@@ -12,11 +12,10 @@ environment{
 DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
    buildNumber="${env.BUILD_NUMBER}"
    branchName="${env.Branch}"
-   toRepositoryName="kubernetes-angular"
+   repositoryName="kubernetes-angular"
 }
 
     stages{
-   
    stage('Kubernetes workflow'){
     stages{
  
@@ -31,23 +30,32 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
  }
 
  stage('Docker build'){
+     when{
+        environment 'dev'
+    }
     steps{
-    bat "docker build -f docker/Dockerfile -t ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} ."
+    bat "docker build -f docker/Dockerfile -t ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} ."
     }
  }
 
   stage('Docker login'){
+    when{
+        environment 'dev'
+    }
                     steps {
                    echo 'Logging in to DockerHub'
                       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
                     //   bat  "docker image prune --force"
                     }
                 }
-                stage('Docker Push') {
+stage('Docker Push') {
+     when{
+        environment 'dev'
+    }
                     
                     steps{
                         echo 'Pushing image to DockerHub'
-                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber}"
                     }
                     post {
                         success {
@@ -57,6 +65,15 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                     }
                 }
 
+stage('Docker image pull'){
+    when{
+        environment 'qa'
+    }
+    steps{
+        bat "docker image pull ${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.tag}"
+    }
+}
+
                 stage('Update image name'){
                     steps{
                         /*Installed Content Replace Plugin*/
@@ -65,7 +82,7 @@ Replacing the temporary image name in deployment.yaml with the actual image name
                         */
                         contentReplace(configs: [fileContentReplaceConfig(
                             configs: [fileContentReplaceItemConfig(
-                                replace: "${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}", 
+                                replace: "${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber}", 
                                 search: 'angular-kube-image')], 
                                 fileEncoding: 'UTF-8', 
                                 filePath: "kubernetes/deployments/${env.environment}-deployment.yaml", 

@@ -1,0 +1,125 @@
+
+pipeline{
+
+    agent any
+
+options{
+  timestamps()
+  skipDefaultCheckout(true)
+}
+
+environment{
+DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
+   buildNumber="${env.BUILD_NUMBER}"
+   branchName="${env.Branch}"
+   repositoryName="kubernetes-angular"
+}
+
+    stages{
+   stage('Kubernetes workflow'){
+    stages{
+ 
+
+ stage('Clone repository'){
+     steps {
+                        echo 'Cloning...'
+                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
+                        //we are using the installed Git plugin to clone the branch from the repo
+                        git branch: "${branchName}", url: 'https://github.com/ramyabala221190/angular-kubernetes.git'
+                    }
+ }
+
+ stage('Docker build'){
+     when{
+        environment name: 'environment', value: 'dev'
+    }
+    steps{
+    bat "docker build -f docker/Dockerfile -t ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} ."
+    }
+ }
+
+  stage('Docker login'){
+    when{
+        environment name: 'environment', value: 'dev'
+    }
+                    steps {
+                   echo 'Logging in to DockerHub'
+                      bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
+                    //   bat  "docker image prune --force"
+                    }
+                }
+stage('Docker Push') {
+     when{
+        environment name: 'environment', value: 'dev'
+    }
+                    
+                    steps{
+                        echo 'Pushing image to DockerHub'
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber}"
+                    }
+                    post {
+                        success {
+                            bat "docker logout" //logout from docker
+                        }
+                  
+                    }
+                }
+
+stage('Update image name in higher env'){
+    when{
+        environment name: 'environment', value: 'qa'
+    }
+    steps{
+contentReplace(configs: [fileContentReplaceConfig(
+                            configs: [fileContentReplaceItemConfig(
+                                replace: "${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.tag}", 
+                                search: 'angular-kube-image')], 
+                                fileEncoding: 'UTF-8', 
+                                filePath: "kubernetes/deployments/${env.environment}-deployment.yaml", 
+                                lineSeparator: 'Windows')])    }
+}
+
+                stage('Update image name'){
+                     when{
+        environment name: 'environment', value: 'dev'
+    }
+                    steps{
+                        /*Installed Content Replace Plugin*/
+                        /*
+Replacing the temporary image name in deployment.yaml with the actual image name
+                        */
+                        contentReplace(configs: [fileContentReplaceConfig(
+                            configs: [fileContentReplaceItemConfig(
+                                replace: "${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber}", 
+                                search: 'angular-kube-image')], 
+                                fileEncoding: 'UTF-8', 
+                                filePath: "helm-test/templates/${env.environment}-deployment.yaml", 
+                                lineSeparator: 'Windows')])
+                    }
+                }
+
+                stage('Deploying to Kubernetes'){
+                    steps{
+                        /*
+The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you
+have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
+You do not have to bother about the no of pods/container. The deployment controller takes care of it.
+                        */
+                        bat "helm upgrade helm-release helm-test"
+                        bat "kubectl get all"
+
+                    }
+                }
+
+
+
+
+
+
+
+
+    }
+   }
+
+    }
+}

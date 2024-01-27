@@ -66,38 +66,7 @@ stage('Docker Push') {
                     }
                 }
 
-// stage('Update image name in higher env'){
-//     when{
-//         environment name: 'environment', value: 'qa'
-//     }
-//     steps{
-// contentReplace(configs: [fileContentReplaceConfig(
-//                             configs: [fileContentReplaceItemConfig(
-//                                 replace: "${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.tag}", 
-//                                 search: 'angular-kube-image')], 
-//                                 fileEncoding: 'UTF-8', 
-//                                 filePath: "kubernetes/deployments/${env.environment}-deployment.yaml", 
-//                                 lineSeparator: 'Windows')])    }
-// }
 
-//                 stage('Update image name'){
-//                      when{
-//         environment name: 'environment', value: 'dev'
-//     }
-//                     steps{
-//                         /*Installed Content Replace Plugin*/
-//                         /*
-// Replacing the temporary image name in deployment.yaml with the actual image name
-//                         */
-//                         contentReplace(configs: [fileContentReplaceConfig(
-//                             configs: [fileContentReplaceItemConfig(
-//                                 replace: "${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber}", 
-//                                 search: '')], 
-//                                 fileEncoding: 'UTF-8', 
-//                                 filePath: "helm-test/templates/${env.environment}-deployment.yaml", 
-//                                 lineSeparator: 'Windows')])
-//                     }
-//                 }
 
                 stage('Deploying to Kubernetes'){
                     steps{
@@ -106,6 +75,8 @@ The deployment controller will ensure that the no of pods are as desired. by def
 have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
 You do not have to bother about the no of pods/container. The deployment controller takes care of it.
                         */
+                        bat "kubectl apply -f ./helm-test/namespace.yaml"
+                        bat "kubectl config set-context dev --namespace=${env.environment}-namespace"
                         bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./helm-test/"
                         bat "kubectl apply -f ./helm-test/config/${env.environment}-config.yaml"
                         bat "helm upgrade ${releaseName} ./${releaseName}-${buildNumber}.tgz --install --debug \

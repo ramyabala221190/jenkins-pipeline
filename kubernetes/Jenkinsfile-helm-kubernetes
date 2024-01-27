@@ -75,7 +75,7 @@ have specified the replicas, then the no of pods as mentioned in the replicas in
 You do not have to bother about the no of pods/container. The deployment controller takes care of it.
                         */
                         // bat "kubectl create namespace ${namespace}"
-                          if("${env.tag}"){
+                       if(env.tag){
                         echo "${env.tag}"
                         buildNumber="${env.tag}"
                         }

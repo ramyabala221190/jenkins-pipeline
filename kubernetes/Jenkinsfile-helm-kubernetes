@@ -13,7 +13,8 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
    buildNumber="${env.BUILD_NUMBER}"
    branchName="${env.Branch}"
    repositoryName="kubernetes-angular"
-   releaseName="helm-test"
+   releaseName="angular-nginx-chart"
+   namespace="angular-nginx-chart-namespace"
 }
 
     stages{
@@ -75,12 +76,12 @@ The deployment controller will ensure that the no of pods are as desired. by def
 have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
 You do not have to bother about the no of pods/container. The deployment controller takes care of it.
                         */
-                        bat "kubectl apply -f ./helm-test/namespace.yaml"
-                        bat "kubectl config set-context dev --namespace=${env.environment}-namespace"
-                        bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./helm-test/"
-                        bat "kubectl apply -f ./helm-test/config/${env.environment}-config.yaml"
+                        bat "kubectl apply -f ./${releaseName}/namespace.yaml"
+                        bat "kubectl config set-context dev --namespace=${namespace}"
+                        bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./${releaseName}/"
+                        bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
                         bat "helm upgrade ${releaseName} ./${releaseName}-${buildNumber}.tgz --install --debug \
-                        --values ./helm-test/values.yaml \
+                        --values ./${releaseName}/values.yaml \
                         --set pod.imageName=${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} \
                         --set environment=${env.environment}"
                         bat "kubectl get all"

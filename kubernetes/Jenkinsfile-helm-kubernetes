@@ -67,9 +67,13 @@ stage('Docker Push') {
                     }
                 }
 
-
-
                 stage('Deploying to Kubernetes'){
+                    environment{
+                        if("${env.tag}"){
+                        echo "${env.tag}"
+                        buildNumber="${env.tag}"
+                        }
+                    }
                     steps{
                         /*
 The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you
@@ -77,6 +81,7 @@ have specified the replicas, then the no of pods as mentioned in the replicas in
 You do not have to bother about the no of pods/container. The deployment controller takes care of it.
                         */
                         // bat "kubectl create namespace ${namespace}"
+                       echo "${buildNumber}"
                        bat "kubectl create namespace ${namespace} --dry-run=client -o yaml | kubectl apply -f -"
                         bat "kubectl config set-context --current --namespace=${namespace}"
                         bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./${releaseName}/"

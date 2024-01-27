@@ -78,7 +78,7 @@ You do not have to bother about the no of pods/container. The deployment control
                         */
                         // bat "kubectl create namespace ${namespace}"
                        // bat "kubectl apply -f ${releaseName}/namespace.yaml"
-                        bat "kubectl config set-context --current --namespace=default"
+                        bat "kubectl config set-context --current --namespace=${namespace}"
                         bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./${releaseName}/"
                         bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
                         bat "helm upgrade ${releaseName} ./${releaseName}-${buildNumber}.tgz --install --debug \

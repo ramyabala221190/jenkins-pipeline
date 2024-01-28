@@ -12,6 +12,8 @@ environment{
 DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
    branchName="${env.Branch}"
    repositoryName="kubernetes-angular"
+     releaseName="angular-nginx-chart"
+   namespace="angular-nginx-chart-namespace-${env.environment}"
 }
 
     stages{
@@ -82,10 +84,6 @@ We create a new namespace for each environment if it does not exist and set the 
     //     environment name: 'environment', value: 'dev'
     // }
 
-    environment{
-   releaseName="angular-nginx-chart"
-   namespace="angular-nginx-chart-namespace-${env.environment}"
-    }
                     steps{
                         /*
 The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you

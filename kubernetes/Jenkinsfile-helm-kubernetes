@@ -10,12 +10,8 @@ options{
 
 environment{
 DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
-   buildNumber="${env.BUILD_NUMBER}"
    branchName="${env.Branch}"
    repositoryName="kubernetes-angular"
-   releaseName="angular-nginx-chart"
-   namespace="angular-nginx-chart-namespace-${env.environment}"
-   tag="${env.tag}"
 }
 
     stages{
@@ -37,6 +33,9 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
         environment name: 'environment', value: 'dev'
     }
     steps{
+    script{
+           env.buildNumber="${env.BUILD_NUMBER}"
+    }
     bat "docker build -f docker/Dockerfile -t ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} ."
     }
  }
@@ -58,7 +57,7 @@ stage('Docker Push') {
                     
                     steps{
                         echo 'Pushing image to DockerHub'
-                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber}"
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.buildNumber}"
                     }
                     post {
                         success {
@@ -79,15 +78,27 @@ We create a new namespace for each environment if it does not exist and set the 
                 }
 
                 stage('Deploying to Kubernetes lower'){
-                when{
-        environment name: 'environment', value: 'dev'
+    //             when{
+    //     environment name: 'environment', value: 'dev'
+    // }
+
+    environment{
+   releaseName="angular-nginx-chart"
+   namespace="angular-nginx-chart-namespace-${env.environment}"
     }
                     steps{
                         /*
 The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you
 have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
 You do not have to bother about the no of pods/container. The deployment controller takes care of it.
-                        */                      
+                        */  
+                        script{
+                            if(env.tag){
+                                env.buildNumber=env.tag
+                            }
+                        }
+
+                        echo "${env.buildNumber}"                    
                      
                         bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./${releaseName}/"
                         bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
@@ -100,27 +111,27 @@ You do not have to bother about the no of pods/container. The deployment control
                     }
                 }
 
-                  stage('Deploying to Kubernetes higher'){
-                when{
-        environment name: 'environment', value: 'uat'
-    }
-                    steps{
-                        /*
-The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you
-have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
-You do not have to bother about the no of pods/container. The deployment controller takes care of it.
-                        */                      
+//                   stage('Deploying to Kubernetes higher'){
+//                 when{
+//         environment name: 'environment', value: 'uat'
+//     }
+//                     steps{
+//                         /*
+// The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you
+// have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
+// You do not have to bother about the no of pods/container. The deployment controller takes care of it.
+//                         */                      
                      
-                        bat "helm package --app-version=${tag} --version=${tag} ./${releaseName}/"
-                        bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
-                        bat "helm upgrade ${releaseName} ./${releaseName}-${tag}.tgz --install --debug \
-                        --values ./${releaseName}/values.yaml \
-                        --set pod.imageName=${DOCKER_HUB_CRED_USR}/${repositoryName}:${tag} \
-                        --set environment=${env.environment}"
-                        bat "kubectl get all"
+//                         bat "helm package --app-version=${tag} --version=${tag} ./${releaseName}/"
+//                         bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
+//                         bat "helm upgrade ${releaseName} ./${releaseName}-${tag}.tgz --install --debug \
+//                         --values ./${releaseName}/values.yaml \
+//                         --set pod.imageName=${DOCKER_HUB_CRED_USR}/${repositoryName}:${tag} \
+//                         --set environment=${env.environment}"
+//                         bat "kubectl get all"
 
-                    }
-                }
+//                     }
+//                 }
 
 
 

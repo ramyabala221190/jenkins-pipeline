@@ -17,9 +17,11 @@ stage('Practice'){
        stage('Update env variables'){
           steps{
             script{
-          env.var1="Hello World ! Good Morning"
-          echo "${var1}"
-          echo "${env.var1}"
+            withEnv(["var1=Hello World ! Good Morning"]) {
+  echo "${var1}"
+echo "${env.var1}"
+                  }
+        
             }
           echo "${var1}"
           echo "${env.var1}"

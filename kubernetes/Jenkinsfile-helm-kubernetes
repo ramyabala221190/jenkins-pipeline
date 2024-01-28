@@ -15,6 +15,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
    repositoryName="kubernetes-angular"
    releaseName="angular-nginx-chart"
    namespace="angular-nginx-chart-namespace-${env.environment}"
+   tag="${env.tag}"
 }
 
     stages{
@@ -67,30 +68,51 @@ stage('Docker Push') {
                     }
                 }
 
+                stage('Set Kubernets Namespace'){
+                    steps{
+                       bat "kubectl create namespace ${namespace} --dry-run=client -o yaml | kubectl apply -f -"
+                        bat "kubectl config set-context --current --namespace=${namespace}"
+                    }
+                }
+
                 stage('Deploying to Kubernetes'){
+                when{
+        environment name: 'environment', value: 'dev'
+    }
                     steps{
                         /*
 The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you
 have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
 You do not have to bother about the no of pods/container. The deployment controller takes care of it.
-                        */
-                        // bat "kubectl create namespace ${namespace}"
-                        script{
-                            if(env.tag){
-                                echo "${env.tag}"
-                                env.buildNumber=env.tag
-                                echo "${env.buildNumber}"
-                            }
-                        }
-
-                       echo "${env.buildNumber}"
-                       bat "kubectl create namespace ${namespace} --dry-run=client -o yaml | kubectl apply -f -"
-                        bat "kubectl config set-context --current --namespace=${namespace}"
-                        bat "helm package --app-version=${env.buildNumber} --version=${env.buildNumber} ./${releaseName}/"
+                        */                      
+                     
+                        bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./${releaseName}/"
                         bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
-                        bat "helm upgrade ${releaseName} ./${releaseName}-${env.buildNumber}.tgz --install --debug \
+                        bat "helm upgrade ${releaseName} ./${releaseName}-${buildNumber}.tgz --install --debug \
                         --values ./${releaseName}/values.yaml \
-                        --set pod.imageName=${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.buildNumber} \
+                        --set pod.imageName=${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} \
+                        --set environment=${env.environment}"
+                        bat "kubectl get all"
+
+                    }
+                }
+
+                  stage('Deploying to Kubernetes'){
+                when{
+        environment name: 'environment', value: 'uat'
+    }
+                    steps{
+                        /*
+The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you
+have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
+You do not have to bother about the no of pods/container. The deployment controller takes care of it.
+                        */                      
+                     
+                        bat "helm package --app-version=${tag} --version=${tag} ./${releaseName}/"
+                        bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
+                        bat "helm upgrade ${releaseName} ./${releaseName}-${tag}.tgz --install --debug \
+                        --values ./${releaseName}/values.yaml \
+                        --set pod.imageName=${DOCKER_HUB_CRED_USR}/${repositoryName}:${tag} \
                         --set environment=${env.environment}"
                         bat "kubectl get all"
 

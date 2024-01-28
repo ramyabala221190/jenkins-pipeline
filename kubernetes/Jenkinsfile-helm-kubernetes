@@ -76,7 +76,7 @@ You do not have to bother about the no of pods/container. The deployment control
                         */
                         // bat "kubectl create namespace ${namespace}"
                         script{
-                            echo ${env.tag}
+                            echo "${env.tag}"
                             if(env.tag){
                                 env.buildNumber=env.tag
                             }

@@ -18,7 +18,9 @@ stage('Practice'){
 
           steps{
             script{
-            env.var2="How are you ?"
+            env.var2="How are you ?" 
+            /*
+            */
             withEnv(["var1=Hello World ! Good Morning"]) {
   echo "${var1}"
 echo "${env.var1}"
@@ -33,6 +35,7 @@ echo "${env.var1}"
 
        stage('Echo var'){
         steps{
+            env.var2="Hey How are you ?"
             echo "${env.var2}"
         }
        }

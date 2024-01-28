@@ -70,6 +70,9 @@ stage('Docker Push') {
 
                 stage('Set Kubernets Namespace'){
                     steps{
+                        /*
+We create a new namespace for each environment if it does not exist and set the namespace as the current context
+                        */
                        bat "kubectl create namespace ${namespace} --dry-run=client -o yaml | kubectl apply -f -"
                         bat "kubectl config set-context --current --namespace=${namespace}"
                     }

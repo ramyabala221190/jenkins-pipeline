@@ -1,0 +1,32 @@
+pipeline{
+
+agent any
+
+options{
+  timestamps()
+}
+
+environment{
+    var1="Hello World"
+}
+stages{
+
+stage('Practice'){
+
+    stages{
+       stage('Update env variables'){
+          steps{
+          env.var1="Hello World ! Good Morning"
+          echo "${var1}"
+          }
+       }
+        
+
+    }
+    
+}
+
+}
+
+
+}

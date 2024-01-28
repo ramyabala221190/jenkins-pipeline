@@ -16,7 +16,9 @@ stage('Practice'){
     stages{
        stage('Update env variables'){
           steps{
+            script{
           env.var1="Hello World ! Good Morning"
+            }
           echo "${var1}"
           }
        }

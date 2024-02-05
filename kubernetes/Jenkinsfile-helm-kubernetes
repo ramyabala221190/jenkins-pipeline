@@ -38,7 +38,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
     script{
            env.buildNumber="${env.BUILD_NUMBER}" //setting env variable inside stage ensures it can be updated later
     }
-    bat "docker build -f docker/Dockerfile --build-args dockerArg=${env.environment} -t ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} ."
+    bat "docker build -f docker/Dockerfile --build-arg dockerArg=${env.environment} -t ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} ."
     }
  }
 

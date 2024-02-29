@@ -12,8 +12,8 @@ environment{
 DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
    branchName="${env.Branch}"
    repositoryName="kubernetes-angular"
-   releaseName="angular-nginx-chart"
-   namespace="angular-nginx-chart-namespace-${env.environment}"
+   releaseName="angular-micro-front-end-1"
+   namespace="angular-micro-front-end-1-chart-namespace-${env.environment}"
 }
 
     stages{
@@ -26,7 +26,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
                         echo 'Cloning...'
                         cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                         //we are using the installed Git plugin to clone the branch from the repo
-                        git branch: "${branchName}", url: 'https://github.com/ramyabala221190/angular-kubernetes.git'
+                        git branch: "${branchName}", url: 'https://github.com/ramyabala221190/angular-element-micro.git'
                     }
  }
 

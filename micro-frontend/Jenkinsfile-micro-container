@@ -13,7 +13,7 @@ DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the Docker
    branchName="${env.Branch}"
    repositoryName="kubernetes-angular"
    releaseName="angular-micro-container"
-   namespace="angular-micro-container-chart-namespace-${env.environment}"
+   namespace="angular-microfrontend-demo-namespace-${env.environment}"
 }
 
     stages{
@@ -71,7 +71,7 @@ stage('Docker Push') {
 
                 stage('Set Kubernets Namespace'){
                     steps{
-                        /*
+                         /*
 We create a new namespace for each environment if it does not exist and set the namespace as the current context
                         */
                        bat "kubectl create namespace ${namespace} --dry-run=client -o yaml | kubectl apply -f -"
@@ -89,6 +89,7 @@ You do not have to bother about the no of pods/container. The deployment control
                         */  
                         script{
                             if(env.tag){
+                            //tag contains the docker image tag we want to use for deployment to higher environment
                                 env.buildNumber=env.tag  //if tag parameter provided, update the build no to the tag 
                             }
                         }

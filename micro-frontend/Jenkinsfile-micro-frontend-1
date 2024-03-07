@@ -97,7 +97,7 @@ You do not have to bother about the no of pods/container. The deployment control
                         echo "${env.buildNumber}"                    
                      
                         bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./${releaseName}/"
-                        bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
+                        //bat "kubectl apply -f ./${releaseName}/config/${env.environment}-config.yaml"
                         bat "helm upgrade ${releaseName} ./${releaseName}-${buildNumber}.tgz --install --debug \
                         --values ./${releaseName}/values.yaml \
                         --set pod.imageName=${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} \

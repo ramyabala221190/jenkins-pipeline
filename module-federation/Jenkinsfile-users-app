@@ -1,0 +1,114 @@
+
+pipeline{
+
+    agent any
+
+options{
+  timestamps()
+  skipDefaultCheckout(true)
+}
+
+environment{
+DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
+   branchName="${env.Branch}"
+   repositoryName="kubernetes-angular"
+   releaseName="angular-users-app-module-federation"
+   namespace="angular-module-federation-demo-namespace-${env.environment}"
+}
+
+    stages{
+   stage('Kubernetes workflow'){
+    stages{
+ 
+
+ stage('Clone repository'){
+     steps {
+                        echo 'Cloning...'
+                        cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
+                        //we are using the installed Git plugin to clone the branch from the repo
+                        git branch: "${branchName}", url: 'https://github.com/ramyabala221190/users-module-federation.git'
+                    }
+ }
+
+ stage('Docker build'){
+     when{
+        environment name: 'environment', value: 'dev'
+    }
+    steps{
+    script{
+           env.buildNumber="${env.BUILD_NUMBER}" //setting env variable inside stage ensures it can be updated later
+    }
+    bat "docker build -f docker/Dockerfile -t ${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} ."
+    }
+ }
+
+  stage('Docker login'){
+    when{
+        environment name: 'environment', value: 'dev'
+    }
+                    steps {
+                   echo 'Logging in to DockerHub'
+                      bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
+                    //   bat  "docker image prune --force"
+                    }
+                }
+stage('Docker Push') {
+     when{
+        environment name: 'environment', value: 'dev'
+    }
+                    
+                    steps{
+                        echo 'Pushing image to DockerHub'
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${repositoryName}:${env.buildNumber}"
+                    }
+                    post {
+                        success {
+                            bat "docker logout" //logout from docker
+                        }
+                  
+                    }
+                }
+
+                stage('Set Kubernets Namespace'){
+                    steps{
+                        /*
+We create a new namespace for each environment if it does not exist and set the namespace as the current context
+                        */
+                       bat "kubectl create namespace ${namespace} --dry-run=client -o yaml | kubectl apply -f -"
+                        bat "kubectl config set-context --current --namespace=${namespace}"
+                    }
+                }
+
+                stage('Deploying to Kubernetes'){
+  
+                    steps{
+                        /*
+The deployment controller will ensure that the no of pods are as desired. by default 1 pod. If you
+have specified the replicas, then the no of pods as mentioned in the replicas in the spec.
+You do not have to bother about the no of pods/container. The deployment controller takes care of it.
+                        */  
+                        script{
+                            if(env.tag){
+                                //tag contains the docker image tag we want to use for deployment to higher environment
+                                env.buildNumber=env.tag  //if tag parameter provided, update the build no to the tag 
+                            }
+                        }
+
+                        echo "${env.buildNumber}"                    
+                     
+                        bat "helm package --app-version=${buildNumber} --version=${buildNumber} ./${releaseName}/"
+                        bat "helm upgrade ${releaseName} ./${releaseName}-${buildNumber}.tgz --install --debug \
+                        --values ./${releaseName}/values.yaml \
+                        --set pod.imageName=${DOCKER_HUB_CRED_USR}/${repositoryName}:${buildNumber} \
+                        --set environment=${env.environment}"
+                        bat "kubectl get all"
+
+                    }
+                }
+
+
+    }
+   }
+
+    }
+}

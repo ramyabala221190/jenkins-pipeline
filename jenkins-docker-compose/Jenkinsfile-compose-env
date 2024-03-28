@@ -12,6 +12,7 @@ pipeline {
 
     environment{
            branchName="${env.branch}"
+           environment="${env.environment}"
     }
 
     stages{
@@ -28,6 +29,7 @@ pipeline {
               
                 stage('Docker Build') {
                     steps {
+                        echo "${environment}"
                         echo 'Running Docker Compose build'
                         bat  "docker compose build"
                     }

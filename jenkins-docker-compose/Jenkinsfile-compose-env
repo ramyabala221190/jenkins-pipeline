@@ -41,7 +41,7 @@ pipeline {
                     steps {
                         echo 'Running Docker Compose Up'
                         script{
-    bat "docker compose -f docker/docker-compose.yml up -d" //- d ensures it runs in deatched mode
+    bat "docker compose -f docker/docker-compose.yml  up -d --remove-orphans --no-build" //- d ensures it runs in deatched mode
                         }
                     }
                 }

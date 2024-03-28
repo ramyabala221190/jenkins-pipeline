@@ -10,6 +10,10 @@ pipeline {
         timestamps() //Add timestamps to the Console Output
     }
 
+    environment{
+           branchName="${env.branch}"
+    }
+
     stages{
         stage('Docker Workflow') {
             stages{

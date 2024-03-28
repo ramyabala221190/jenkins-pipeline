@@ -31,7 +31,7 @@ pipeline {
                     steps {
                         echo "${environment}"
                         echo 'Running Docker Compose build'
-                        bat  "docker compose build"
+                        bat  "docker compose -f docker/docker-compose.yml build"
                     }
                 }
 
@@ -41,7 +41,7 @@ pipeline {
                     steps {
                         echo 'Running Docker Compose Up'
                         script{
-    bat "docker compose up -d" //- d ensures it runs in deatched mode
+    bat "docker compose -f docker/docker-compose.yml up -d" //- d ensures it runs in deatched mode
                         }
                     }
                 }

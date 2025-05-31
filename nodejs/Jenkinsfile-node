@@ -27,19 +27,6 @@ pipeline {
                         }
                     }
                 }
-
-                stage('Install') {
-                    steps {
-                        echo 'Installing..'
-                        bat 'npm install'
-                        bat 'npm install -g pm2'
-                    }
-                    post {
-                        success {
-                            echo 'Install step completed'
-                        }
-                    }
-                }
                 stage('Build step')  {
                     // when{
                     //     //execute the stage only when the env variable with key environment has value prod
@@ -48,7 +35,7 @@ pipeline {
                     // }
                     steps {
                         echo "Building using ${environment} configuration"
-                        bat "npm run pm2-${environment}"
+                        bat "npm run pm2-${environment}-deploy"
                     }
                     post {
                         success {

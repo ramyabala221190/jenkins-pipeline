@@ -36,7 +36,7 @@ pipeline {
                     steps {
                         echo "Building using ${environment} configuration"
                         //sh "npm run pm2-${environment}-deploy"
-                        "C:/Program Files/Git/git-bash.exe" deploy.sh
+                        "C:/Program Files/Git/git-bash.exe" "deploy.sh"
                     }
                     post {
                         success {

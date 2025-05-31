@@ -35,7 +35,7 @@ pipeline {
                     // }
                     steps {
                         echo "Building using ${environment} configuration"
-                        bat "npm run pm2-${environment}-deploy"
+                        sh "npm run pm2-${environment}-deploy"
                     }
                     post {
                         success {

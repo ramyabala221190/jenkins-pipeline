@@ -21,7 +21,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         //containerPort=80 //fix the container port
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
         containerName="angular-nginx-${env.environment}-container"
-        serviceName="deocker-${env.environment}"
+        serviceName="docker-${env.environment}"
         server_ip="4.201.137.36"
         docker_daemon_port=2375
         DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     

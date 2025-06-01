@@ -74,7 +74,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     steps{
                         echo 'Execute SSH..'
 withCredentials([sshUserPrivateKey(
-    credentialsId: 'testingNodeJsAzure',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
+    credentialsId: 'NodeJsRemoteServer',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     docker --version \
     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \

@@ -41,33 +41,33 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }
                 }
               
-                stage('Docker Build') {
-                    steps {
-                        echo 'Running Docker Compose build'
-                        bat  "docker compose -f docker-compose.yml build ${serviceName}"
-                    }
-                }
+                // stage('Docker Build') {
+                //     steps {
+                //         echo 'Running Docker Compose build'
+                //         bat  "docker compose -f docker-compose.yml build ${serviceName}"
+                //     }
+                // }
 
-                stage('Docker login'){
-                    steps {
-                   echo 'Logging in to DockerHub'
-                      bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
-                    //   bat  "docker image prune --force"
-                    }
-                }
-                stage('Docker Push') {
+                // stage('Docker login'){
+                //     steps {
+                //    echo 'Logging in to DockerHub'
+                //       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
+                //     //   bat  "docker image prune --force"
+                //     }
+                // }
+                // stage('Docker Push') {
                     
-                    steps{
-                        echo 'Pushing image to DockerHub'
-                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
-                    }
-                    post {
-                        success {
-                            bat "docker logout" //logout from docker
-                        }
+                //     steps{
+                //         echo 'Pushing image to DockerHub'
+                //        bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
+                //     }
+                //     post {
+                //         success {
+                //             bat "docker logout" //logout from docker
+                //         }
                   
-                    }
-                }
+                //     }
+                // }
 
                 stage('Deploy to Remote VM'){
           
@@ -77,7 +77,7 @@ withCredentials([sshUserPrivateKey(
     credentialsId: 'NodeJsRemoteServer',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     docker --version \
-    && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
+    && docker compose -f docker-compose.yml build ${serviceName} \
     && docker compose -f docker-compose.yml up -d --remove-orphans --no-build ${serviceName} \
     && docker image prune --force \
     && docker ps \

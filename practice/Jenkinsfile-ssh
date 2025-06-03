@@ -16,8 +16,8 @@ pipeline {
                     steps {
                         echo 'Execute SSH..'
 withCredentials([sshUserPrivateKey(
-    credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
-    bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@20.51.236.140 \
+    credentialsId: 'NodejsRemoteServer',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
+    bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@4.201.200.234 \
     uname -a"
  
 }

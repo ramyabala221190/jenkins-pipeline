@@ -77,8 +77,8 @@ withCredentials([sshUserPrivateKey(
     credentialsId: 'NodejsRemoteServer',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     docker --version \
-    && docker compose -f docker/docker-compose.yml build \
-    && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build \
+    && docker compose -f docker/docker-compose.yml -f docker-compose.${targetEnv}.yml build \
+    && docker compose -f docker/docker-compose.yml -f docker-compose.${targetEnv}.yml up -d --remove-orphans --no-build \
     && docker image prune --force \
     && docker ps \
     && docker images"

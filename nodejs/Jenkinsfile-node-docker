@@ -22,7 +22,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
        // toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
         //containerName="node-docker-${env.environment}-container"
        // serviceName="node-docker-${env.environment}"
-        server_ip="20.206.106.236"
+        server_ip=envServerMapping(env.environment)
         docker_daemon_port=2375
         DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
        // def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
@@ -41,34 +41,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }
                 }
               
-                // stage('Docker Build') {
-                //     steps {
-                //         echo 'Running Docker Compose build'
-                //         bat  "docker compose -f docker-compose.yml build ${serviceName}"
-                //     }
-                // }
-
-                // stage('Docker login'){
-                //     steps {
-                //    echo 'Logging in to DockerHub'
-                //       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
-                //     //   bat  "docker image prune --force"
-                //     }
-                // }
-                // stage('Docker Push') {
-                    
-                //     steps{
-                //         echo 'Pushing image to DockerHub'
-                //        bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
-                //     }
-                //     post {
-                //         success {
-                //             bat "docker logout" //logout from docker
-                //         }
-                  
-                //     }
-                // }
-
+             
                 stage('Deploy to Remote VM'){
           
                     steps{
@@ -85,21 +58,20 @@ withCredentials([sshUserPrivateKey(
 }
                     }
                 }
-//                 stage('Docker Compose up to run application locally') {
-                    
-//                     steps {
-//                         /*
-// connect to a remote server, pull the docker image and run docker compose up
-//                         */
-//                         echo 'Running Docker Compose Up'
-//                         script{
-//     bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName}" //- d ensures it runs in deatched mode
-//                             //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
-//                         }
-//                     }
-//                 }
+
             }
         }
     }
 
 }
+
+def envServerMapping(envName){
+
+    if(envName.equals("prod")) {
+        return "191.235.235.158";
+    }
+    else if (envName.equals("uat")){
+        return "20.206.106.236";
+    } 
+}
+

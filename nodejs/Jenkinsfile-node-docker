@@ -70,7 +70,7 @@ def envServerMapping(envName){
     if(envName.equals("prod")) {
         return "191.235.235.158";
     }
-    else if (envName.equals("uat")){
+    else if (envName.equals("dev")){
         return "20.206.106.236";
     } 
 }

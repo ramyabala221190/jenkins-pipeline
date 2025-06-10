@@ -14,19 +14,12 @@ pipeline {
         /*
 readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         */
-        DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials') //pulling the DockerHub crendetials saved in Jenkins-->Dashboard--->Credentials
         targetEnv="${env.environment}" //environment info from pipeline input
         buildNumber="${env.BUILD_NUMBER}"
         branchName="${env.Branch}"
-        //containerPort=80 //fix the container port
-       // toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
-        //containerName="node-docker-${env.environment}-container"
-       // serviceName="node-docker-${env.environment}"
         server_ip=envServerMapping(env.environment)
         docker_daemon_port=2375
         DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
-       // def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-       // appPort="${envConfig.port}" //decide the application port based on the environment
         }
 
     stages{

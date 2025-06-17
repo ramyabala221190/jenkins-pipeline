@@ -17,7 +17,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         targetEnv="${env.environment}" //environment info from pipeline input
         buildNumber="${env.BUILD_NUMBER}"
         branchName="${env.Branch}"
-        server_ip="20.206.110.12"
+        server_ip="4.201.170.111"
         docker_daemon_port=2375
         DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
         }

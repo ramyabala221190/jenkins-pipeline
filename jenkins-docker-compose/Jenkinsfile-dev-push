@@ -22,7 +22,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
         containerName="angular-nginx-${env.environment}-container"
         serviceName="nginx-${env.environment}"
-        server_ip="20.51.236.140"
+        server_ip="4.201.145.65"
         docker_daemon_port=2375
         DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
         // def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"

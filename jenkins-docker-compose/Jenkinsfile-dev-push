@@ -22,7 +22,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
         containerName="angular-nginx-${env.environment}-container"
         serviceName="nginx-${env.environment}"
-        server_ip="4.201.145.65"
+        server_ip="20.51.236.140"
         docker_daemon_port=2375
         DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
         def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
@@ -44,9 +44,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                 stage('Docker Build') {
                     steps {
                         echo 'Running Docker Compose build'
-                        // bat  "docker compose -f docker/docker-compose.yml build ${serviceName}"
-                        bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"
-
+                        bat  "docker compose -f docker/docker-compose.yml build ${serviceName}"
                     }
                 }
 
@@ -80,16 +78,14 @@ withCredentials([sshUserPrivateKey(
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     docker --version \
     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
-    && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml  up -d --remove-orphans --no-build \
+    && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName} \
+    && docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json \
     && docker image prune --force \
     && docker ps \
     && docker images"
 }
                     }
                 }
-
-                //    && docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json \
-
 //                 stage('Docker Compose up to run application locally') {
                     
 //                     steps {

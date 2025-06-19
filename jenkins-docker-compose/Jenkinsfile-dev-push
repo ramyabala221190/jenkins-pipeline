@@ -42,47 +42,50 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
 
                 }
               
-                stage('Docker Build') {
-                    environment{
+                // stage('Docker Build') {
+                //     environment{
+                //         def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
+                //         appPort="${envConfig.port}" //decide the application port based on the environment
+                //     }
+                //     steps {
+                //         echo 'Running Docker Compose build'
+                //         bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"
+                //     }
+                // }
+
+                // stage('Docker login'){
+                //     steps {
+                //    echo 'Logging in to DockerHub'
+                //       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
+                //     //   bat  "docker image prune --force"
+                //     }
+                // }
+                // stage('Docker Push') {
+                    
+                //     steps{
+                //         echo 'Pushing image to DockerHub'
+                //        bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
+                //     }
+                //     post {
+                //         success {
+                //             bat "docker logout" //logout from docker
+                //         }
+                  
+                //     }
+                // }
+
+                stage('Deploy to Remote VM'){
+          environment{
                         def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
                         appPort="${envConfig.port}" //decide the application port based on the environment
                     }
-                    steps {
-                        echo 'Running Docker Compose build'
-                        bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"
-                    }
-                }
-
-                stage('Docker login'){
-                    steps {
-                   echo 'Logging in to DockerHub'
-                      bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
-                    //   bat  "docker image prune --force"
-                    }
-                }
-                stage('Docker Push') {
-                    
-                    steps{
-                        echo 'Pushing image to DockerHub'
-                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
-                    }
-                    post {
-                        success {
-                            bat "docker logout" //logout from docker
-                        }
-                  
-                    }
-                }
-
-                stage('Deploy to Remote VM'){
-          
                     steps{
                         echo 'Execute SSH..'
 withCredentials([sshUserPrivateKey(
     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     docker --version \
-    && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber} \
+    && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build \
     && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build \
     && docker image prune --force \
     && docker ps \

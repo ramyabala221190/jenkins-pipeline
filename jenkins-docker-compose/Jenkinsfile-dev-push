@@ -49,7 +49,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }
                     steps {
                         echo 'Running Docker Compose build'
-                        bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"
+                        bat  "docker compose --memory=4g -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"
                     }
                 }
 

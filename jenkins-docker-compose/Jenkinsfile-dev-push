@@ -82,7 +82,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     steps{
                         echo 'Execute SSH..'
 withCredentials([sshUserPrivateKey(
-    credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
+    credentialsId: 'NodejsRemoteServer',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
     docker --version \
     && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build \

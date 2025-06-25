@@ -43,10 +43,10 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                 }
               
                 stage('Docker Build') {
-                    environment{
-                        def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-                        appPort="${envConfig.port}" //decide the application port based on the environment
-                    }
+                    // environment{
+                    //     def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
+                    //     appPort="${envConfig.port}" //decide the application port based on the environment
+                    // }
                     steps {
                         echo 'Running Docker Compose build'
                         bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"

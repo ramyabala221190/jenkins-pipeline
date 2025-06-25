@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true) //prevent default checkout of git branch
+        timestamps() //Add timestamps to the Console Output
+    }
+    stages{
+     stage('Test') {
+                    steps {
+                       bat 'ng version'
+                    }
+
+                }
+    }
+
+}

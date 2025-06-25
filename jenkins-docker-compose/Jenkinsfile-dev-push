@@ -18,13 +18,13 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         environ="${env.environment}" //environment info from pipeline input
         buildNumber="${env.BUILD_NUMBER}"
         branchName="${env.Branch}"
-        containerPort=80 //fix the container port
+       // containerPort=80 //fix the container port
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
-        containerName="angular-nginx-${env.environment}-container"
-        serviceName="nginx-${env.environment}"
+        //containerName="angular-nginx-${env.environment}-container"
+        //serviceName="nginx-${env.environment}"
         server_ip="4.201.145.65"
-        docker_daemon_port=2375
-        DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
+        //docker_daemon_port=2375
+        //DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
         // def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
         // appPort="${envConfig.port}" //decide the application port based on the environment
         }
@@ -42,16 +42,16 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
 
                 }
               
-                // stage('Docker Build') {
-                //     environment{
-                //         def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-                //         appPort="${envConfig.port}" //decide the application port based on the environment
-                //     }
-                //     steps {
-                //         echo 'Running Docker Compose build'
-                //         bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"
-                //     }
-                // }
+                stage('Docker Build') {
+                    environment{
+                        def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
+                        appPort="${envConfig.port}" //decide the application port based on the environment
+                    }
+                    steps {
+                        echo 'Running Docker Compose build'
+                        bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"
+                    }
+                }
 
                 // stage('Docker login'){
                 //     steps {
@@ -74,38 +74,38 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                 //     }
                 // }
 
-                stage('Deploy to Remote VM'){
-          environment{
-                        def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-                        appPort="${envConfig.port}" //decide the application port based on the environment
-                    }
-                    steps{
-                        echo 'Execute SSH..'
-withCredentials([sshUserPrivateKey(
-    credentialsId: 'NodejsRemoteServer',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
-    bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
-    docker --version \
-    && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build \
-    && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build \
-    && docker image prune --force \
-    && docker ps \
-    && docker images"
-}
-                    }
-                }
-//                 stage('Docker Compose up to run application locally') {
-                    
-//                     steps {
-//                         /*
-// connect to a remote server, pull the docker image and run docker compose up
-//                         */
-//                         echo 'Running Docker Compose Up'
-//                         script{
-//     bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName}" //- d ensures it runs in deatched mode
-//                             //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
-//                         }
+//                 stage('Deploy to Remote VM'){
+//           environment{
+//                         def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
+//                         appPort="${envConfig.port}" //decide the application port based on the environment
+//                     }
+//                     steps{
+//                         echo 'Execute SSH..'
+// withCredentials([sshUserPrivateKey(
+//     credentialsId: 'NodejsRemoteServer',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
+//     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
+//     docker --version \
+//     && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build \
+//     && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build \
+//     && docker image prune --force \
+//     && docker ps \
+//     && docker images"
+// }
 //                     }
 //                 }
+                stage('Docker Compose up to run application locally') {
+                    
+                    steps {
+                        /*
+connect to a remote server, pull the docker image and run docker compose up
+                        */
+                        echo 'Running Docker Compose Up'
+                        script{
+    bat "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build" //- d ensures it runs in deatched mode
+                            //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
+                        }
+                    }
+                }
             }
         }
     }

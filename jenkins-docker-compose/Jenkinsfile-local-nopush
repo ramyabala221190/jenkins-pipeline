@@ -32,7 +32,7 @@ pipeline {
                 stage('Docker Build') {
                     steps {
                         echo 'Running Docker Compose build'
-                        bat  "docker compose -f docker/docker-compose.yml build"
+                        bat  "docker compose -f docker/docker-compose.yml build nginx-${environ}"
                     }
                 }
 
@@ -45,7 +45,7 @@ connect to a remote server, pull the docker image and run docker compose up
                         */
                         echo 'Running Docker Compose Up'
                         script{
-    bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build" //- d ensures it runs in deatched mode
+    bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build nginx-${environ}" //- d ensures it runs in deatched mode
                         }
                     }
                 }

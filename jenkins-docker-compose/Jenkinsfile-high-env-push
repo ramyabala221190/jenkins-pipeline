@@ -51,7 +51,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     steps {
                    echo 'Logging in to DockerHub'
                        bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
-                    //    bat  "docker image prune --force"
+                       bat  "docker image prune --force"
                     }
                 }
 

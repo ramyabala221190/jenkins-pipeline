@@ -44,7 +44,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                         // when running using multiple-environment-single docker service approach
                        // bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build"
                         // when runnnig using multiple-environment-multiple docker servce approach
-                        bat  "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml build nginx-${environ}"
+                        bat  "docker compose -f docker/docker-compose.yml build nginx-${environ}"
                     }
                 }
 
@@ -52,7 +52,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     steps {
                    echo 'Logging in to DockerHub'
                       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
-                    //   bat  "docker image prune --force"
+                      bat  "docker image prune --force"
                     }
                 }
                 stage('Docker Push') {
@@ -94,9 +94,9 @@ connect to a remote server, pull the docker image and run docker compose up
                         echo 'Running Docker Compose Up'
                         script{
                     // when running using multiple-environment-single docker service approach
-    //bat "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build" //- d ensures it runs in deatched mode
+               // bat "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build" //- d ensures it runs in deatched mode
                      // when runnnig using multiple-environment-multiple docker servce approach     
-                    bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build nginx-${environ}" //- d ensures it runs in deatched mode
+                   bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build nginx-${environ}" //- d ensures it runs in deatched mode
                 //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
                         }
                     }

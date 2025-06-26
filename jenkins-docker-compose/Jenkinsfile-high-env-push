@@ -94,8 +94,10 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                             /*
 connect to a remote server, pull the docker image and run docker compose up
                         */
-    bat "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build" //- d ensures it runs in deatched mode
-                            //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
+ // when running using multiple-environment-single docker service approach
+    //bat "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build" //- d ensures it runs in deatched mode
+// when runnnig using multiple-environment-multiple docker service approach     
+    bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build nginx-${environ}" //- d ensures it runs in deatched mode                            //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
                         }
                     }
                 }

@@ -20,6 +20,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         branchName="${env.Branch}"
         fromRepositoryName=envRepoMapping(env.environment) //decide the repository from which the image needs to be pulled
         toRepositoryName="angular-nginx-${env.environment}" //the repository to which the image needs to be pushed
+        //uncommnet the below when deploying to remote server. server ip may need to be changed
         // server_ip="20.51.236.140"
         // docker_daemon_port=2375
         // DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}" 
@@ -76,7 +77,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
 //     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
 //     docker --version \
 //     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${tag} \
-//     && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build \
+//     && docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build \
 //     && docker image prune --force \
 //     && docker ps \
 //     && docker images"

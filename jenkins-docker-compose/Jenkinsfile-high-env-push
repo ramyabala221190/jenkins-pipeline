@@ -18,16 +18,11 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         environ="${env.environment}" //environment info from pipeline input
         tag="${env.tag}"
         branchName="${env.Branch}"
-        containerPort=80 //fix the container port
         fromRepositoryName=envRepoMapping(env.environment) //decide the repository from which the image needs to be pulled
         toRepositoryName="angular-nginx-${env.environment}" //the repository to which the image needs to be pushed
-        containerName="angular-nginx-${env.environment}-container" //container name
-        serviceName="nginx-${env.environment}"
-        server_ip="20.51.236.140"
-        docker_daemon_port=2375
-        DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}" 
-        def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-        appPort="${envConfig.port}" //decide the application port based on the environment
+        // server_ip="20.51.236.140"
+        // docker_daemon_port=2375
+        // DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}" 
     }
 
     stages{
@@ -61,7 +56,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
 
                 stage('Docker Push') {
                     
-                    steps{
+                    steps{ 
                         echo 'Pushing image to DockerHub'
                        bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${tag}"
                     }
@@ -72,37 +67,37 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }
                 }
 
-                stage('Docker deploy to Remote VM'){
+//                 stage('Docker deploy to Remote VM'){
 
-                    steps{
-                        echo 'Execute SSH..'
-withCredentials([sshUserPrivateKey(
-    credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
-    bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
-    docker --version \
-    && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${tag} \
-    && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build \
-    && docker image prune --force \
-    && docker ps \
-    && docker images"
+//                     steps{
+//                         echo 'Execute SSH..'
+// withCredentials([sshUserPrivateKey(
+//     credentialsId: 'sshConnection',usernameVariable: 'username',keyFileVariable:'keyfile')]) {
+//     bat "ssh -o StrictHostKeyChecking=no -i ${keyfile} ${username}@${server_ip} \
+//     docker --version \
+//     && docker image pull ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${tag} \
+//     && docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build \
+//     && docker image prune --force \
+//     && docker ps \
+//     && docker images"
  
-}
-    }
-}
+// }
+//     }
+// }
                     
-//                 stage('Docker Deploy and Compose Up') {
+                stage('Docker Deploy and Compose Up') {
                     
-//                     steps {
-//                         echo 'Running Docker Compose Up'
-//                         script{
-//                             /*
-// connect to a remote server, pull the docker image and run docker compose up
-//                         */
-//     bat "docker compose -f docker/docker-compose.yml up -d --remove-orphans --no-build ${serviceName}" //- d ensures it runs in deatched mode
-//                             //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
-//                         }
-//                     }
-//                 }
+                    steps {
+                        echo 'Running Docker Compose Up'
+                        script{
+                            /*
+connect to a remote server, pull the docker image and run docker compose up
+                        */
+    bat "docker compose -f docker/docker-compose.yml -f docker/docker-compose.${environ}.yml up -d --remove-orphans --no-build" //- d ensures it runs in deatched mode
+                            //bat "docker cp src/assets/environments/${environ}.config.json ${containerName}:/usr/share/nginx/html/assets/environments/runtime-environment.json"
+                        }
+                    }
+                }
             }
         }
     }

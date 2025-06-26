@@ -18,15 +18,10 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         environ="${env.environment}" //environment info from pipeline input
         buildNumber="${env.BUILD_NUMBER}"
         branchName="${env.Branch}"
-       // containerPort=80 //fix the container port
         toRepositoryName="angular-nginx-${env.environment}" //repository to which the image will be pushed
-        //containerName="angular-nginx-${env.environment}-container"
-        //serviceName="nginx-${env.environment}"
-        server_ip="4.201.145.65"
+        //server_ip="4.201.145.65"
         //docker_daemon_port=2375
         //DOCKER_HOST="tcp://${server_ip}:${docker_daemon_port}"     
-        // def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-        // appPort="${envConfig.port}" //decide the application port based on the environment
         }
 
     stages{
@@ -53,32 +48,29 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }
                 }
 
-                // stage('Docker login'){
-                //     steps {
-                //    echo 'Logging in to DockerHub'
-                //       bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
-                //     //   bat  "docker image prune --force"
-                //     }
-                // }
-                // stage('Docker Push') {
+                stage('Docker login'){
+                    steps {
+                   echo 'Logging in to DockerHub'
+                      bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
+                    //   bat  "docker image prune --force"
+                    }
+                }
+                stage('Docker Push') {
                     
-                //     steps{
-                //         echo 'Pushing image to DockerHub'
-                //        bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
-                //     }
-                //     post {
-                //         success {
-                //             bat "docker logout" //logout from docker
-                //         }
+                    steps{
+                        echo 'Pushing image to DockerHub'
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${toRepositoryName}:${buildNumber}"
+                    }
+                    post {
+                        success {
+                            bat "docker logout" //logout from docker
+                        }
                   
-                //     }
-                // }
+                    }
+                }
 
 //                 stage('Deploy to Remote VM'){
-//           environment{
-//                         def envConfig = readJSON file: "src/assets/environments/${env.environment}.config.json"
-//                         appPort="${envConfig.port}" //decide the application port based on the environment
-//                     }
+//
 //                     steps{
 //                         echo 'Execute SSH..'
 // withCredentials([sshUserPrivateKey(

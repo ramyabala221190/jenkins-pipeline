@@ -1,6 +1,8 @@
 /* groovylint-disable NestedBlockDepth */
 /* groovylint-disable-next-line CompileStatic */
 
+//global variables
+
 def ipMap=[
     dev:'20.206.106.236',
     prod:'191.235.235.158'
@@ -12,13 +14,17 @@ def git_repo_name='https://github.com/ramyabala221190/nodejs-express-docker-ngin
 
 def targetEnvironment="${env.environment}"
 
-def docker_repo=[
+def target_docker_repo=[
    node:"node-${env.environment}",
    nginx:"nginx-${env.environment}"
 ]
 
-def branchName="${env.Branch}"
+def source_docker_repo=[
+   node:"node-dev",
+   nginx:"nginx-dev"
+]
 
+def  branchName="${env.Branch}"
 
 
 pipeline {
@@ -30,13 +36,14 @@ pipeline {
     }
 
 
+//environment variables
     environment{
         /*
 readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         */
-        toNodeRepo="${docker_repo.node}"
-        toNginxRepo="${docker_repo.nginx}"
-        targetEnv="${targetEnvironment}" //environment info from pipeline input
+        targetEnv="${env.environment}" //environment info from pipeline input
+        toNodeRepo="${target_docker_repo.node}"
+        toNginxRepo="${target_docker_repo.nginx}"
         buildNumber="${env.BUILD_NUMBER}"
         DOCKER_HUB_CRED=credentials('dockerHubRegistryCredentials')
         DOCKER_HOST="tcp://${ipMap[targetEnvironment]}:${docker_daemon_port}" //uncomment when deploying to remote server     
@@ -46,7 +53,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
         stage('Docker Workflow') {
             stages{
                 stage('Clone') {
-                    steps { 
+                    steps {
                         echo 'Cloning...'
                         cleanWs() //Workspace Clean Plugin to delete the workspace before cloning and building
                         //we are using the installed Git plugin to clone the branch from the repo
@@ -54,14 +61,18 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }
                 }
 
-                 stage('Docker Build') {
+
+                 stage('Docker Pull and Tag Image') {
                     steps{
-                echo 'Docker Build'
-                bat "docker compose  -p ${targetEnv}-proj -f docker/docker-compose.yml -f docker/docker-compose.${targetEnv}.yml build"
+                        echo 'Pulling latest image from low enviornment repository in DockerHub'
+                bat "docker image pull ${DOCKER_HUB_CRED_USR}/${source_docker_repo.node}:${tag}"
+                bat "docker image tag ${DOCKER_HUB_CRED_USR}/${source_docker_repo.node}:${tag} ${DOCKER_HUB_CRED_USR}/${target_docker_repo.node}:${tag}"
+                bat "docker image pull ${DOCKER_HUB_CRED_USR}/${source_docker_repo.nginx}:${tag}"
+                bat "docker image tag ${DOCKER_HUB_CRED_USR}/${source_docker_repo.nginx}:${tag} ${DOCKER_HUB_CRED_USR}/${target_docker_repo.nginx}:${tag}"
                     }  
                 }
 
-                 stage('Docker login'){
+                    stage('Docker login'){
                     steps {
                    echo 'Logging in to DockerHub'
                        bat  "docker login -u ${DOCKER_HUB_CRED_USR} -p ${DOCKER_HUB_CRED_PSW} docker.io"
@@ -69,12 +80,14 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                     }
                 }
 
+
+        
                 stage('Docker Push') {
                     
                     steps{ 
-                        echo 'Pushing image to DockerHub'
-                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${docker_repo.node}:${buildNumber}"
-                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${docker_repo.nginx}:${buildNumber}"
+                       echo 'Pushing image to DockerHub'
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${target_docker_repo.node}:${tag}"
+                       bat  "docker image push ${DOCKER_HUB_CRED_USR}/${target_docker_repo.nginx}:${tag}"
 
                     }
                     post {
@@ -88,8 +101,8 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
 
                 // stage('Run locally'){
                 //     steps{
-                //        bat " docker --version \
-                //        && docker compose  -p ${targetEnv}-proj -f docker/docker-compose.yml -f docker/docker-compose.${targetEnv}.yml up -d --remove-orphans --no-build \
+                //         bat "docker --version \
+                //         && docker compose  -p ${targetEnv}-proj -f docker/docker-compose.yml -f docker/docker-compose.${targetEnv}.yml up -d --remove-orphans --no-build \
                 //         && docker image prune --force \
                 //         && docker ps \
                 //         && docker images"
@@ -98,7 +111,7 @@ readJSON method comes from the Pipeline Utility Steps plugin in Jenkins
                 // }
               
              
-                 stage('Deploy to Remote VM'){
+                stage('Deploy to Remote VM'){
           
                     steps{
                         echo 'Execute SSH..'
